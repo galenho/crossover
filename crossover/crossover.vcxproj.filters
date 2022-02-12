@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="lua_wrapper.cpp">
+      <Filter>script</Filter>
+    </ClCompile>
+    <ClCompile Include="lua_network.cpp">
+      <Filter>script</Filter>
+    </ClCompile>
+    <ClCompile Include="lua_mongo.cpp">
+      <Filter>script</Filter>
+    </ClCompile>
+    <ClCompile Include="lua_mysql.cpp">
+      <Filter>script</Filter>
+    </ClCompile>
+    <ClCompile Include="lua_crossover.cpp">
+      <Filter>script</Filter>
+    </ClCompile>
+    <ClCompile Include="lua_seri.c">
+      <Filter>script</Filter>
+    </ClCompile>
+    <ClCompile Include="lua_pb.c">
+      <Filter>script</Filter>
+    </ClCompile>
+    <ClCompile Include="lua_filesystem.c">
+      <Filter>script</Filter>
+    </ClCompile>
+    <ClCompile Include="lua_cjson\dtoa.c">
+      <Filter>script\lua_cjson</Filter>
+    </ClCompile>
+    <ClCompile Include="lua_cjson\g_fmt.c">
+      <Filter>script\lua_cjson</Filter>
+    </ClCompile>
+    <ClCompile Include="lua_cjson\lua_cjson.c">
+      <Filter>script\lua_cjson</Filter>
+    </ClCompile>
+    <ClCompile Include="lua_cjson\strbuf.c">
+      <Filter>script\lua_cjson</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="script">
+      <UniqueIdentifier>{0707d736-f786-430f-b7c4-3bc64e828ead}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="script\lua_cjson">
+      <UniqueIdentifier>{72c90fc7-243e-45b7-87e0-d2ee99c783e1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="lua_wrapper.h">
+      <Filter>script</Filter>
+    </ClInclude>
+    <ClInclude Include="lua_network.h">
+      <Filter>script</Filter>
+    </ClInclude>
+    <ClInclude Include="lua_mongo.h">
+      <Filter>script</Filter>
+    </ClInclude>
+    <ClInclude Include="lua_mysql.h">
+      <Filter>script</Filter>
+    </ClInclude>
+    <ClInclude Include="lua_crossover.h">
+      <Filter>script</Filter>
+    </ClInclude>
+    <ClInclude Include="lua_seri.h">
+      <Filter>script</Filter>
+    </ClInclude>
+    <ClInclude Include="lua_pb.h">
+      <Filter>script</Filter>
+    </ClInclude>
+    <ClInclude Include="lua_filesystem.h">
+      <Filter>script</Filter>
+    </ClInclude>
+    <ClInclude Include="lua_cjson\dtoa_config.h">
+      <Filter>script\lua_cjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lua_cjson\fpconv.h">
+      <Filter>script\lua_cjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lua_cjson\strbuf.h">
+      <Filter>script\lua_cjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lua_cjson\lua_cjson.h">
+      <Filter>script\lua_cjson</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

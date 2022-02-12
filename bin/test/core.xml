@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<!--(0) LOG_LEVEL_DEBUG, (1) LOG_LEVEL_INFO, (2) LOG_LEVEL_WARN, (3) LOG_LEVEL_ERROR, (4) LOG_LEVEL_FATAL-->
+	<log_level>1</log_level>
+	<log_file>../log/test.txt</log_file>
+	<io_thread_count>2</io_thread_count>
+	<lua_file>main.lua</lua_file>
+</root>

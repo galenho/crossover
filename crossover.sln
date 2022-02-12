@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30128.74
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "engine", "engine\engine.vcxproj", "{90297C34-F231-4DF4-848E-A74BCC0E40ED}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "crossover", "crossover\crossover.vcxproj", "{D34F9843-4513-434C-A5C2-6145E1A2D71F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{90297C34-F231-4DF4-848E-A74BCC0E40ED} = {90297C34-F231-4DF4-848E-A74BCC0E40ED}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|win32 = Debug|win32
+		Release|win32 = Release|win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{90297C34-F231-4DF4-848E-A74BCC0E40ED}.Debug|win32.ActiveCfg = Debug|Win32
+		{90297C34-F231-4DF4-848E-A74BCC0E40ED}.Debug|win32.Build.0 = Debug|Win32
+		{90297C34-F231-4DF4-848E-A74BCC0E40ED}.Release|win32.ActiveCfg = Release|Win32
+		{90297C34-F231-4DF4-848E-A74BCC0E40ED}.Release|win32.Build.0 = Release|Win32
+		{D34F9843-4513-434C-A5C2-6145E1A2D71F}.Debug|win32.ActiveCfg = Debug|Win32
+		{D34F9843-4513-434C-A5C2-6145E1A2D71F}.Debug|win32.Build.0 = Debug|Win32
+		{D34F9843-4513-434C-A5C2-6145E1A2D71F}.Release|win32.ActiveCfg = Release|Win32
+		{D34F9843-4513-434C-A5C2-6145E1A2D71F}.Release|win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {15E80C7B-48E9-44FD-BD45-E5221A45D418}
+	EndGlobalSection
+EndGlobal

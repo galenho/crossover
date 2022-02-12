@@ -1,0 +1,304 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="network">
+      <UniqueIdentifier>{654935e6-5d74-4233-85ba-0c63bc6f4e97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="network\impl">
+      <UniqueIdentifier>{d9dd798c-1f6d-4a99-973b-b95d8236bfb8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="network\impl\tcp">
+      <UniqueIdentifier>{bd511246-f080-4efb-b756-7fd9b01e7718}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="network\system">
+      <UniqueIdentifier>{955cede0-9cfb-4bd7-9276-c04ba6793a12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="network\system\iocp">
+      <UniqueIdentifier>{e426327d-42bb-4e58-975a-a7b66992da37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="network\system\epoll">
+      <UniqueIdentifier>{d85ab605-6c18-4b3c-8313-8988fb9b5523}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="util">
+      <UniqueIdentifier>{f81982d8-5678-4966-9812-62230bf8120a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="platform">
+      <UniqueIdentifier>{3d9b305d-80b6-4543-9af9-8f9611663d65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="contain">
+      <UniqueIdentifier>{1aadd0e5-78c9-4971-8918-b4ef12156e03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="interface">
+      <UniqueIdentifier>{3866547b-2701-47eb-9ef5-2a255b902b86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="log">
+      <UniqueIdentifier>{89c82425-dab1-43e8-a731-9474bcc46b71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="console">
+      <UniqueIdentifier>{c1f9d2da-d50d-4393-87aa-b09baffbfecf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mysql">
+      <UniqueIdentifier>{73faf4cf-329c-41fb-a816-9c908b168e4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="network\impl\http">
+      <UniqueIdentifier>{85786e6b-f91d-4dba-b659-5b8db88e97ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mongo">
+      <UniqueIdentifier>{f3e5d743-17e8-4195-b5e7-dab6b96174c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core">
+      <UniqueIdentifier>{8a4a0bd5-6309-4534-8a48-7e09aecbeb35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lua">
+      <UniqueIdentifier>{ad63a2e8-9719-40d9-8239-db2e42a801d6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="tcp_client_impl.cpp">
+      <Filter>network\impl\tcp</Filter>
+    </ClCompile>
+    <ClCompile Include="tcp_server_impl.cpp">
+      <Filter>network\impl\tcp</Filter>
+    </ClCompile>
+    <ClCompile Include="socket.cpp">
+      <Filter>network\system</Filter>
+    </ClCompile>
+    <ClCompile Include="socket_mgr_win32.cpp">
+      <Filter>network\system\iocp</Filter>
+    </ClCompile>
+    <ClCompile Include="socket_ops_win32.cpp">
+      <Filter>network\system\iocp</Filter>
+    </ClCompile>
+    <ClCompile Include="socket_win32.cpp">
+      <Filter>network\system\iocp</Filter>
+    </ClCompile>
+    <ClCompile Include="socket_linux.cpp">
+      <Filter>network\system\epoll</Filter>
+    </ClCompile>
+    <ClCompile Include="socket_mgr_linux.cpp">
+      <Filter>network\system\epoll</Filter>
+    </ClCompile>
+    <ClCompile Include="socket_ops_linux.cpp">
+      <Filter>network\system\epoll</Filter>
+    </ClCompile>
+    <ClCompile Include="referable.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="mutex.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="rwlock.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="sequence_buffer.cpp">
+      <Filter>contain</Filter>
+    </ClCompile>
+    <ClCompile Include="http_accessor.cpp">
+      <Filter>interface</Filter>
+    </ClCompile>
+    <ClCompile Include="scheduler.cpp">
+      <Filter>interface</Filter>
+    </ClCompile>
+    <ClCompile Include="tcp_client.cpp">
+      <Filter>interface</Filter>
+    </ClCompile>
+    <ClCompile Include="tcp_server.cpp">
+      <Filter>interface</Filter>
+    </ClCompile>
+    <ClCompile Include="clog.cpp">
+      <Filter>log</Filter>
+    </ClCompile>
+    <ClCompile Include="http_accessor_impl.cpp">
+      <Filter>network\impl\http</Filter>
+    </ClCompile>
+    <ClCompile Include="console_poller.cpp">
+      <Filter>console</Filter>
+    </ClCompile>
+    <ClCompile Include="scheduler_impl.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="serialize_stream.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="datatime.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="statement.cpp">
+      <Filter>mysql</Filter>
+    </ClCompile>
+    <ClCompile Include="resultset.cpp">
+      <Filter>mysql</Filter>
+    </ClCompile>
+    <ClCompile Include="connection.cpp">
+      <Filter>mysql</Filter>
+    </ClCompile>
+    <ClCompile Include="database.cpp">
+      <Filter>interface</Filter>
+    </ClCompile>
+    <ClCompile Include="database_impl.cpp">
+      <Filter>mysql</Filter>
+    </ClCompile>
+    <ClCompile Include="thread_base.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="task.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="work_thread.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="common.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="mongo_database_impl.cpp">
+      <Filter>mongo</Filter>
+    </ClCompile>
+    <ClCompile Include="mongo_connection.cpp">
+      <Filter>mongo</Filter>
+    </ClCompile>
+    <ClCompile Include="mongo_database.cpp">
+      <Filter>interface</Filter>
+    </ClCompile>
+    <ClCompile Include="lua_fix.cpp">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua_bson.cpp">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="event.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="tcp_client_impl.h">
+      <Filter>network\impl\tcp</Filter>
+    </ClInclude>
+    <ClInclude Include="tcp_server_impl.h">
+      <Filter>network\impl\tcp</Filter>
+    </ClInclude>
+    <ClInclude Include="network.h">
+      <Filter>network\system</Filter>
+    </ClInclude>
+    <ClInclude Include="socket.h">
+      <Filter>network\system</Filter>
+    </ClInclude>
+    <ClInclude Include="socket_defines.h">
+      <Filter>network\system</Filter>
+    </ClInclude>
+    <ClInclude Include="socket_ops.h">
+      <Filter>network\system</Filter>
+    </ClInclude>
+    <ClInclude Include="socket_mgr_win32.h">
+      <Filter>network\system\iocp</Filter>
+    </ClInclude>
+    <ClInclude Include="tcp_listen_socket_win32.h">
+      <Filter>network\system\iocp</Filter>
+    </ClInclude>
+    <ClInclude Include="socket_mgr_linux.h">
+      <Filter>network\system\epoll</Filter>
+    </ClInclude>
+    <ClInclude Include="tcp_listen_socket_linux.h">
+      <Filter>network\system\epoll</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\referable.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\timer.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\guard.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\mutex.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\rwlock.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\sequence_buffer.h">
+      <Filter>contain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\http_accessor.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\scheduler.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\tcp_client.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\tcp_server.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\clog.h">
+      <Filter>log</Filter>
+    </ClInclude>
+    <ClInclude Include="http_accessor_impl.h">
+      <Filter>network\impl\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\console_poller.h">
+      <Filter>console</Filter>
+    </ClInclude>
+    <ClInclude Include="scheduler_impl.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\common.h" />
+    <ClInclude Include="..\include\serialize_stream.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\datatime.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="statement.h">
+      <Filter>mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="resultset.h">
+      <Filter>mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="connection.h">
+      <Filter>mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\database_defines.h">
+      <Filter>mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\database.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="database_impl.h">
+      <Filter>mysql</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\thread_base.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="work_thread.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="mongo_database_impl.h">
+      <Filter>mongo</Filter>
+    </ClInclude>
+    <ClInclude Include="mongo_connection.h">
+      <Filter>mongo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\mongo_database.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\task.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\lua_fix.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\lua_bson.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\mongo_task.h">
+      <Filter>mongo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\safe_queue.h">
+      <Filter>contain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\event.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

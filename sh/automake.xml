@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <Projects src_path_win="D:/Project/crossover" src_path_linux="/root/workspace/crossover" thread_count="6">
+  	<Project src="engine" OutPut="libengine" ProgramType="1">
+		<IncludeDir>../../ ../../include ../../include/lua ../../include/libbson-1.0 ../../include/libmongoc-1.0</IncludeDir>
+		<LibDir></LibDir>
+		<Debug Lib = "" SubAdditionOption = "-std=c++14 -D_GLIBCXX_DEBUG"  MakeAdditionOption =""/>
+		<Release Lib = "" SubAdditionOption = "-std=c++14"  MakeAdditionOption =""/>
+	</Project>
+
+	<Project src="crossover" OutPut="crossover" ProgramType="0">
+		<IncludeDir>../.. ../../include ../../include/lua ../../include/libmongoc-1.0 ../../include/libbson-1.0</IncludeDir>
+		<LibDir>../../lib</LibDir>
+		<Debug Lib = "engineD mongoc-static-1.0 bson-static-1.0 lua mysqlclient curl ssl crypto tinyxml jsonD pthread sasl2 resolv rt z dl" SubAdditionOption = "-std=c++14 -D_GLIBCXX_DEBUG"  MakeAdditionOption =""/>
+		<Release Lib = "engine mongoc-static-1.0 bson-static-1.0 lua mysqlclient curl ssl crypto tinyxml json pthread sasl2 resolv rt z dl" SubAdditionOption = "-std=c++14"  MakeAdditionOption =""/>
+	</Project>
+  </Projects>
+</root>

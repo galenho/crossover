@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<Project Name="crossover.luaprj" Cmd="" Arg="" Dir="" Toggle="false" >
+    <Filter RelativePath="." Toggle="false" >
+        <Filter RelativePath=".\common" Toggle="false" >
+            <LuaFile RelativePath=".\common.lua" />
+            <LuaFile RelativePath=".\list.lua" />
+            <LuaFile RelativePath=".\peer.lua" />
+            <LuaFile RelativePath=".\util.lua" />
+            <Filter RelativePath=".\hotfix" Toggle="false" >
+                <LuaFile RelativePath=".\hotfix.lua" />
+                <Filter RelativePath=".\internal" Toggle="true" >
+                    <LuaFile RelativePath=".\functions_replacer.lua" />
+                    <LuaFile RelativePath=".\module_updater.lua" />
+                </Filter>
+            </Filter>
+            <Filter RelativePath=".\lua-protobuf" Toggle="true" >
+                <LuaFile RelativePath=".\protoc.lua" />
+                <LuaFile RelativePath=".\serpent.lua" />
+            </Filter>
+            <Filter RelativePath=".\lua-xml" Toggle="true" >
+                <LuaFile RelativePath=".\luaxml.lua" />
+            </Filter>
+        </Filter>
+        <Filter RelativePath=".\test" Toggle="false" >
+            <LuaFile RelativePath=".\bson_test.lua" />
+            <LuaFile RelativePath=".\console_test.lua" />
+            <LuaFile RelativePath=".\hello_world.lua" />
+            <LuaFile RelativePath=".\hotfix_module.lua" />
+            <LuaFile RelativePath=".\hotfix_test.lua" />
+            <LuaFile RelativePath=".\httpclient_test.lua" />
+            <LuaFile RelativePath=".\mongo_test.lua" />
+            <LuaFile RelativePath=".\mysql_test.lua" />
+            <LuaFile RelativePath=".\tcpclient_test.lua" />
+            <LuaFile RelativePath=".\tcpserver_test.lua" />
+            <LuaFile RelativePath=".\timer_test.lua" />
+        </Filter>
+    </Filter>
+</Project>
