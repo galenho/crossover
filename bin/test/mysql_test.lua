@@ -84,13 +84,13 @@ end
 
 fun_query_callback = function(is_success, rs)
     if is_success then
-		(rs)
+		dump(rs)
 	end
 end
 
 fun_query_callback_ex = function(is_success, rs, param)
     if is_success then
-		(rs)
+		dump(rs)
 	end
 end
 
@@ -108,7 +108,7 @@ function test_query()
 end
 
 function test_mysql()
-	db:initialize("192.168.12.56", 4769, "root", "88104725galenho", "testdb", "utf8", 2)
+	db:initialize("127.0.0.1", 4769, "root", "root", "testdb", "utf8", 2)
 
 	db:ping()
 	
