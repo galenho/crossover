@@ -8,10 +8,10 @@
 	作者: galen
 	  QQ: 88104725
 	  
-	  构建和使用
-	  
-	  1. 在windows 10上的构建, VS.net 2019 按F7编译即可
-	  2. 在centos7.6上的构建:
+	构建和使用
+	
+	1. 在windows 10上的构建, VS.net 2019 按F7编译即可
+	2. 在centos7.6上的构建:
 	  	2.1 centos7.6下libstdc++版本过低的解决办法：、
 		(1) 把crossover/bin/libstdc++.so.6.0.21复制到/usr/lib64目录
 		(2) cd /usr/lib64
@@ -19,23 +19,25 @@
 			ln -s libstdc++.so.6.0.21 libstdc++.so.6
 
 			strings /usr/lib64/libstdc++.so.6 | grep GLIBC
+			
 		2.2 编译程序
-		
 			cd sh
 			chmod -R 750 *
 			./automake
 			./makeDebug.sh
 			./makeRelease.sh
+			
+	3. 安装mongoDB
+	  
+	  	(1) windows 10
 		
-		3. 安装mongoDB
-		(1) windows 10
 		(2) centos 7.6
 		
-		4. 执行第一个crossover程序
-			(1) windows 10
-				cd test
-				..\crossover.exe hello_world.lua
+	4. 执行第一个crossover程序
+		(1) windows 10
+			cd test
+			..\crossover.exe hello_world.lua
 			
-			(2)	centos 7.6
-				cd test
-				../crossover hello_world.lua
+		(2)	centos 7.6
+			cd test
+			../crossover hello_world.lua
