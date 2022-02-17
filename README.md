@@ -16,7 +16,9 @@
 	
 	一、构建
 	
-	1. 在windows 10上的构建, VS.net 2019 按F7编译即可
+	1. 在windows 10上的构建: 
+	
+		VS.net 2019打开crossover.sln， 按F7编译即可
 	
 	2. 在centos7.6上的构建:
 	
