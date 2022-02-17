@@ -51,6 +51,6 @@
 			cd test
 			..\crossover.exe hello_world.lua
 			
-		(2)	centos 7.6
+		(2) centos 7.6
 			cd test
 			../crossover hello_world.lua
