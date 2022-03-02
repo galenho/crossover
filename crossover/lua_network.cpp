@@ -353,25 +353,19 @@ int lua_udpserver_start(lua_State* L)
 	uint32 sendbuffersize = (uint32)lua_tointeger(L, 7);
 	uint32 recvbuffersize = (uint32)lua_tointeger(L, 8);
 
-	bool is_parse_package = true;
 	if (count > 8)
 	{
-		is_parse_package = (bool)lua_toboolean(L, 9);
+		onconnected_handler.param_id = toluafix_ref_param(L, 8);
 	}
 
 	if (count > 9)
 	{
-		onconnected_handler.param_id = toluafix_ref_param(L, 9);
+		onclose_handler.param_id = toluafix_ref_param(L, 9);
 	}
 
 	if (count > 10)
 	{
-		onclose_handler.param_id = toluafix_ref_param(L, 10);
-	}
-
-	if (count > 11)
-	{
-		onrecv_handler.param_id = toluafix_ref_param(L, 11);
+		onrecv_handler.param_id = toluafix_ref_param(L, 10);
 	}
 
 	t->server->Start(ip, port, onconnected_handler, onclose_handler, onrecv_handler, sendbuffersize, recvbuffersize);

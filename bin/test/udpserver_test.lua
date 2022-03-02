@@ -12,4 +12,4 @@ fun_recv = function(conn_idx, data, len)
 	server:send(conn_idx, data, len)
 end
 
-server:start("127.0.0.1", 30061, fun_connect, fun_close, fun_recv, 8192, 8192, true)
+server:start("127.0.0.1", 30061, fun_connect, fun_close, fun_recv, 8192, 8192)
