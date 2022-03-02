@@ -64,17 +64,17 @@ int lua_tcpserver_start(lua_State* L)
 
 	if (count > 9)
 	{
-		onconnected_handler.param_id = toluafix_ref_param(L, 9);
+		onconnected_handler.param_id = toluafix_ref_param(L, 10);
 	}
 
 	if (count > 10)
 	{
-		onclose_handler.param_id = toluafix_ref_param(L, 10);
+		onclose_handler.param_id = toluafix_ref_param(L, 11);
 	}
 
 	if (count > 11)
 	{
-		onrecv_handler.param_id = toluafix_ref_param(L, 11);
+		onrecv_handler.param_id = toluafix_ref_param(L, 12);
 	}
 
 	t->server->Start(ip, port, onconnected_handler, onclose_handler, onrecv_handler, sendbuffersize, recvbuffersize, is_parse_package);
@@ -318,19 +318,15 @@ int lua_udpserver_start(lua_State* L)
 	}
 	else if (count == 9)
 	{
-		check_param(L, 9, "usnfffnnb");
+		check_param(L, 9, "usnfffnnf");
 	}
 	else if (count == 10)
 	{
-		check_param(L, 10, "usnfffnnbf");
-	}
-	else if (count == 11)
-	{
-		check_param(L, 11, "usnfffnnbff");
+		check_param(L, 10, "usnfffnnff");
 	}
 	else
 	{
-		check_param(L, 12, "usnfffnnbfff");
+		check_param(L, 11, "usnfffnnfff");
 	}
 
 	udpserver_t* t = (udpserver_t*)luaL_checkudata(L, 1, "udpserver");
@@ -355,17 +351,17 @@ int lua_udpserver_start(lua_State* L)
 
 	if (count > 8)
 	{
-		onconnected_handler.param_id = toluafix_ref_param(L, 8);
+		onconnected_handler.param_id = toluafix_ref_param(L, 9);
 	}
 
 	if (count > 9)
 	{
-		onclose_handler.param_id = toluafix_ref_param(L, 9);
+		onclose_handler.param_id = toluafix_ref_param(L, 10);
 	}
 
 	if (count > 10)
 	{
-		onrecv_handler.param_id = toluafix_ref_param(L, 10);
+		onrecv_handler.param_id = toluafix_ref_param(L, 11);
 	}
 
 	t->server->Start(ip, port, onconnected_handler, onclose_handler, onrecv_handler, sendbuffersize, recvbuffersize);
@@ -466,19 +462,15 @@ int lua_udpclient_connect(lua_State* L)
 	}
 	else if (count == 9)
 	{
-		check_param(L, 9, "usnfffnnb");
+		check_param(L, 9, "usnfffnnt");
 	}
 	else if (count == 10)
 	{
-		check_param(L, 10, "usnfffnnbt");
-	}
-	else if (count == 11)
-	{
-		check_param(L, 11, "usnfffnnbtt");
+		check_param(L, 10, "usnfffnntt");
 	}
 	else
 	{
-		check_param(L, 12, "usnfffnnbttt");
+		check_param(L, 11, "usnfffnnttt");
 	}
 
 	udpclient_t* t = (udpclient_t*)luaL_checkudata(L, 1, "udpclient");
@@ -500,25 +492,19 @@ int lua_udpclient_connect(lua_State* L)
 	uint32 sendbuffersize = (uint32)lua_tointeger(L, 7);
 	uint32 recvbuffersize = (uint32)lua_tointeger(L, 8);
 
-	bool is_parse_package = true;
 	if (count > 8)
 	{
-		is_parse_package = (bool)lua_toboolean(L, 9);
+		onconnected_handler.param_id = toluafix_ref_param(L, 9);
 	}
 
 	if (count > 9)
 	{
-		onconnected_handler.param_id = toluafix_ref_param(L, 10);
+		onclose_handler.param_id = toluafix_ref_param(L, 10);
 	}
 
 	if (count > 10)
 	{
-		onclose_handler.param_id = toluafix_ref_param(L, 11);
-	}
-
-	if (count > 11)
-	{
-		onrecv_handler.param_id = toluafix_ref_param(L, 12);
+		onrecv_handler.param_id = toluafix_ref_param(L, 11);
 	}
 
 	uint16 local_port = 0;
