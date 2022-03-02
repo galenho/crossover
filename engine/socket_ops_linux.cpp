@@ -17,6 +17,13 @@ namespace SocketOps
 		return socket(AF_INET, SOCK_STREAM, 0);
 	}
 
+	// Create file descriptor for socket i/o operations.
+	SOCKET CreateUDPFileDescriptor()
+	{
+		// create a socket for use with overlapped i/o.
+		return socket(AF_INET, SOCK_DGRAM, 0);
+	}
+
 	// Disable blocking send/recv calls.
 	bool Nonblocking(SOCKET fd)
 	{

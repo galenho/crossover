@@ -64,6 +64,8 @@ public:
 	bool Send(const void* Bytes, uint32 Size);
 	bool SendMsg(const void* Bytes, uint32 Size);
 
+	bool SendUDP(const void* Bytes, uint32 Size);
+
 	// Burst system - Pushes event to queue - do at the end of write events.
 	bool BurstPush();
 
@@ -85,6 +87,11 @@ public:
 	inline uint32 GetConnectIdx()
 	{
 		return conn_idx_;
+	}
+
+	inline SocketType GetSocketType()
+	{
+		return socket_type_;
 	}
 
 	/* Platform-specific methods */
@@ -165,6 +172,13 @@ public:
 	}
 
 #endif
+
+private:
+	static int udp_output(const char* buf, int len, ikcpcb* kcp, void* user);
+	void send_udp_package(const char* buf, int len);
+
+	static int udp_input(const char* buf, int len, ikcpcb* kcp, void* user);
+	void on_udp_package_recv(const char* buf, int len);
 
 public:
 	sequence_buffer readBuffer;

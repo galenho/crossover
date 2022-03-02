@@ -16,6 +16,13 @@ namespace SocketOps
 		return ::WSASocket(AF_INET, SOCK_STREAM, 0, 0, 0, WSA_FLAG_OVERLAPPED);
 	}
 
+	// Create file descriptor for socket i/o operations.
+	SOCKET CreateUDPFileDescriptor()
+	{
+		// create a socket for use with overlapped i/o.
+		return ::WSASocket(AF_INET, SOCK_DGRAM, 0, 0, 0, WSA_FLAG_OVERLAPPED);
+	}
+
 	// Disable blocking send/recv calls.
 	bool Nonblocking(SOCKET fd)
 	{

@@ -14,6 +14,9 @@ namespace SocketOps
 	// Create file descriptor for socket i/o operations.
 	SOCKET CreateTCPFileDescriptor();
 
+	// Create file descriptor for socket i/o operations.
+	SOCKET CreateUDPFileDescriptor();
+
 	// Disable blocking send/recv calls.
 	bool Nonblocking(SOCKET fd);
 

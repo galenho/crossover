@@ -70,7 +70,25 @@ void HandleReadComplete(Socket* s)
 		{
 			//PRINTF_ERROR("conn_idx = %d, bytes = %d, errno = %d", s->GetConnectIdx(), bytes, errno);
 			
-			SocketMgr::get_instance()->CloseSocket(s);
+			if (s->GetSocketType() == SOCKET_TYPE_TCP)
+			{
+				SocketMgr::get_instance()->CloseSocket(s);
+			}
+			else //UDP
+			{
+				if (s->is_udp_connected_)
+				{
+					SocketMgr::get_instance()->CloseSocket(s);
+				}
+				else
+				{
+					close(s->GetFd()); //直接调用关闭closesocket
+
+					s->status_ = socket_status_closed;
+					s->OnConnect(false);
+				}
+			}
+
 			return;
 		}
 		else
@@ -465,7 +483,8 @@ void SocketMgr::Accept( SOCKET aSocket,
 						uint32 recvbuffersize,
 						bool is_parse_package )
 {
-	Socket *s = new Socket( aSocket,
+	Socket *s = new Socket( SOCKET_TYPE_TCP,
+							aSocket,
 							MakeGeneralConnID(),
 							onconnected_handler,
 							onclose_handler,
@@ -512,7 +531,8 @@ uint32 SocketMgr::Connect(const string& ip, uint16 port,
 						  uint32 recvbuffersize)
 {
 	uint32 conn_idx = MakeGeneralConnID();
-	Socket *s = new Socket( 0,
+	Socket *s = new Socket( SOCKET_TYPE_TCP,
+							0,
 							conn_idx,
 							onconnected_handler, 
 							onclose_handler, 
@@ -565,7 +585,8 @@ uint32 SocketMgr::ConnectEx( const string& ip, uint16 port,
 						  bool is_parse_package)
 {
 	uint32 conn_idx = MakeGeneralConnID();
-	Socket *s = new Socket( 0,
+	Socket *s = new Socket( SOCKET_TYPE_TCP, 
+		0,
 		conn_idx,
 		onconnected_handler, 
 		onclose_handler, 
@@ -829,7 +850,25 @@ bool SocketMgr::SendMsg(uint32 conn_idx, const void* content, uint32 len)
 	//--------------------------------------------------------------------------
 	if (s)
 	{
-		bool ret = s->SendMsg(content, len);
+		bool ret = false;
+
+		if (s->GetSocketType() == SOCKET_TYPE_TCP)
+		{
+			ret = s->SendMsg(content, len);
+		}
+		else
+		{
+			if (s->is_udp_connected_)
+			{
+				ret = s->SendUDP(content, len); //不带有包头的消息
+			}
+			else
+			{
+				ret = s->SendMsg(content, len);
+			}
+
+		}
+
 		if (!ret)
 		{
 			REF_RELEASE(s);

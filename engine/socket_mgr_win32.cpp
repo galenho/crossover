@@ -64,7 +64,26 @@ void HandleReadComplete(Socket* s, uint32 len, bool is_success)
 		else
 		{
 			//PRINTF_ERROR("HandleReadComplete SocketMgr::get_instance()->CloseSocket, fd = %d, conn_idx = %d", s->GetFd(), s->GetConnectIdx());
-			SocketMgr::get_instance()->CloseSocket(s);
+			if (s->GetSocketType() == SOCKET_TYPE_TCP)
+			{
+				SocketMgr::get_instance()->CloseSocket(s);
+			}
+			else //UDP
+			{
+				if (s->is_udp_connected_)
+				{
+					SocketMgr::get_instance()->CloseSocket(s);
+				}
+				else
+				{
+					closesocket(s->GetFd()); //直接调用关闭closesocket
+
+					//PRINTF_ERROR("closesocket fd = %d", fd);
+
+					s->status_ = socket_status_closed;
+					s->OnConnect(false);
+				}
+			}
 		}
 	}
 	else if (s->status_ == socket_status_closing)
@@ -693,7 +712,25 @@ bool SocketMgr::SendMsg(uint32 conn_idx, const void* content, uint32 len)
 	//--------------------------------------------------------------------------
 	if (s)
 	{
-		bool ret = s->SendMsg(content, len);
+		bool ret = false;
+
+		if (s->GetSocketType() == SOCKET_TYPE_TCP)
+		{
+			ret = s->SendMsg(content, len);
+		}
+		else
+		{
+			if (s->is_udp_connected_)
+			{
+				ret = s->SendUDP(content, len); //不带有包头的消息
+			}
+			else
+			{
+				ret = s->SendMsg(content, len);
+			}
+
+		}
+
 		if (!ret)
 		{
 			REF_RELEASE(s);

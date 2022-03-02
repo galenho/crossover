@@ -61,10 +61,30 @@ Socket::Socket(SocketType socket_type,
 	// Check for needed fd allocation.
 	if (fd_ == 0)
 	{
-		fd_ = SocketOps::CreateTCPFileDescriptor();
+		if (socket_type == SOCKET_TYPE_TCP)
+		{
+			fd_ = SocketOps::CreateTCPFileDescriptor();
+		}
+		else
+		{
+			fd_ = SocketOps::CreateUDPFileDescriptor();
+			p_kcp_ = ikcp_create(conn_idx, (void*)this);
+			p_kcp_->output = &Socket::udp_output;
+			p_kcp_->input = &Socket::udp_input;
+
+			// 启动快速模式
+			// 第二个参数 nodelay-启用以后若干常规加速将启动
+			// 第三个参数 interval为内部处理时钟，默认设置为 10ms
+			// 第四个参数 resend为快速重传指标，设置为2
+			// 第五个参数 为是否禁用常规流控，这里禁止
+			//ikcp_nodelay(p_kcp_, 1, 10, 2, 1);
+			ikcp_nodelay(p_kcp_, 1, 2, 1, 1); // 设置成1次ACK跨越直接重传, 这样反应速度会更快. 内部时钟5毫秒.
+		}
 	}
 
 	status_ = socket_status_closed;
+
+	is_udp_connected_ = false;
 
 	//PRINTF_INFO("new fd = %d, conn_idx = %d", fd_, conn_idx_);
 }
@@ -251,7 +271,6 @@ bool Socket::ConnectUDP(const char* address, uint16 port, uint16& local_port)
 	if (ret != 0)
 	{
 		PRINTF_ERROR("Bind unsuccessful on port:%d", local_port);
-		assert(false);
 		return false;
 	}
 
@@ -499,4 +518,40 @@ bool Socket::SendMsg(const void* Bytes, uint32 Size)
 #endif
 
 	return ret;
+}
+
+bool Socket::SendUDP(const void* Bytes, uint32 Size)
+{
+	Guard guard(kcp_mutex_);
+	int send_ret = ikcp_send(p_kcp_, (const char*)Bytes, Size);
+	if (send_ret < 0)
+	{
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+}
+
+int Socket::udp_output(const char* buf, int len, ikcpcb* kcp, void* user)
+{
+	((Socket*)user)->send_udp_package(buf, len);
+	return 0;
+}
+
+void Socket::send_udp_package(const char* buf, int len)
+{
+	SendMsg(buf, len);
+}
+
+int Socket::udp_input(const char* buf, int len, ikcpcb* kcp, void* user)
+{
+	((Socket*)user)->on_udp_package_recv(buf, len);
+	return 0;
+}
+
+void Socket::on_udp_package_recv(const char* buf, int len)
+{
+	//onrecv_handler_(conn_idx_, buf, len);
 }
