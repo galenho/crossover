@@ -100,6 +100,22 @@ public:
 		uint32 recvbuffersize,
 		bool is_parse_package);
 
+	bool AcceptUDP(sockaddr_in& remote_address,
+		const HandleInfo onconnected_handler,
+		const HandleInfo onclose_handler,
+		const HandleInfo onrecv_handler,
+		uint32 sendbuffersize,
+		uint32 recvbuffersize,
+		uint16& local_port);
+
+	uint32 ConnectUDP(const string& ip, uint16 port, uint16& local_port,
+		const HandleInfo onconnected_handler,
+		const HandleInfo onclose_handler,
+		const HandleInfo onrecv_handler,
+		uint32 sendbuffersize,
+		uint32 recvbuffersize,
+		bool is_server_build = false);
+
 	void CloseSocket(Socket* s);
 	void ShutdownThreads();
 

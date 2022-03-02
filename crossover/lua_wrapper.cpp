@@ -31,6 +31,30 @@ int luaopen_lua_tcpclient(lua_State* L)
 	return 1;
 }
 
+int luaopen_lua_udpserver(lua_State* L)
+{
+	luaL_newmetatable(L, "udpserver");
+	lua_pushvalue(L, -1);
+	lua_setfield(L, -2, "__index");
+
+	luaL_setfuncs(L, lua_udpserver_methods, 0);
+	luaL_newlib(L, lua_udpserver_functions);
+
+	return 1;
+}
+
+int luaopen_lua_udpclient(lua_State* L)
+{
+	luaL_newmetatable(L, "udpclient");
+	lua_pushvalue(L, -1);
+	lua_setfield(L, -2, "__index");
+
+	luaL_setfuncs(L, lua_udpclient_methods, 0);
+	luaL_newlib(L, lua_udpclient_functions);
+
+	return 1;
+}
+
 int luaopen_lua_httpclient(lua_State* L)
 {
 	luaL_newmetatable(L, "httpclient");

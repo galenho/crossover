@@ -24,6 +24,8 @@ static const luaL_Reg lua_reg_libs[] = {
 	{ "crossover",		luaopen_lua_crossover},
 	{ "tcpserver",		luaopen_lua_tcpserver},
 	{ "tcpclient",		luaopen_lua_tcpclient},
+	{ "udpserver",		luaopen_lua_udpserver},
+	{ "udpclient",		luaopen_lua_udpclient},
 	{ "httpclient",		luaopen_lua_httpclient},
 	{ "mysql",			luaopen_lua_mysql},
 	{ "mongo",			luaopen_lua_mongo},

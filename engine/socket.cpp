@@ -17,7 +17,8 @@ Socket::Socket( SOCKET wakeup_fd, SocketIOThread* work_thread )
 }
 #endif
 
-Socket::Socket(SOCKET fd,
+Socket::Socket(SocketType socket_type, 
+			   SOCKET fd,
 			   uint32 conn_idx,
 			   const HandleInfo onconnected_handler,
 			   const HandleInfo onclose_handler,
@@ -26,6 +27,8 @@ Socket::Socket(SOCKET fd,
 			   uint32 recvbuffersize,
 			   bool is_parse_package) 
 {
+	socket_type_ = socket_type;
+
 	if (fd == 0) //说明是TcpClient连接
 	{
 		is_tcp_client_ = true;
@@ -78,7 +81,14 @@ Socket::~Socket()
 
 void Socket::Update( uint32 cur_time )
 {
-	
+	if (socket_type_ == SOCKET_TYPE_UDP)
+	{
+		if (is_udp_connected_ && p_kcp_)
+		{
+			Guard guard(kcp_mutex_);
+			ikcp_update(p_kcp_, cur_time);
+		}
+	}
 }
 
 string Socket::GetRemoteIP()
@@ -222,6 +232,58 @@ bool Socket::ConnectEx(const char* address, uint16 port)
 
 #endif
 
+bool Socket::ConnectUDP(const char* address, uint16 port, uint16& local_port)
+{
+	struct hostent* ci = gethostbyname(address);
+	if (ci == 0)
+		return false;
+
+	m_client.sin_family = ci->h_addrtype;
+	m_client.sin_port = ntohs((u_short)port);
+	memcpy(&m_client.sin_addr.s_addr, ci->h_addr_list[0], ci->h_length);
+
+	sockaddr_in a;
+	a.sin_family = AF_INET;
+	a.sin_port = htons((u_short)local_port);
+	a.sin_addr.s_addr = htonl(INADDR_ANY);
+
+	int ret = ::bind(fd_, (const sockaddr*)&a, sizeof(a));
+	if (ret != 0)
+	{
+		PRINTF_ERROR("Bind unsuccessful on port:%d", local_port);
+		assert(false);
+		return false;
+	}
+
+#ifdef WIN32
+	int len = sizeof(a);
+#else
+	socklen_t len = sizeof(a);
+#endif
+
+	getsockname(fd_, (sockaddr*)&a, &len);
+	local_port = ntohs(a.sin_port); // 获取端口号
+
+	if (connect(fd_, (const sockaddr*)&m_client, sizeof(m_client)) == -1)
+	{
+		return false;
+	}
+
+	SocketOps::Nonblocking(fd_);
+	// set common parameters on the file descriptor
+	SocketOps::DisableBuffering(fd_);
+
+	// IOCP stuff
+#ifdef CONFIG_USE_IOCP
+	if (CreateIoCompletionPort((HANDLE)fd_, work_thread_->GetCompletionPort(), (ULONG_PTR)this, 0) == 0)
+	{
+		return false;
+	}
+#endif
+
+	return true;
+}
+
 void Socket::Accept(sockaddr_in* address)
 {
 	memcpy(&m_client, address, sizeof(*address));
@@ -285,12 +347,70 @@ void Socket::OnRead()
 		// (2) 解析包体
 		if (packet_len >= cursor + 4 + len) //解包成功
 		{
-			cursor += 4;
+			if (socket_type_ == SOCKET_TYPE_UDP)
+			{
+				if (!is_udp_connected_)
+				{
+					if (packet_len == sizeof(RepServerPort))
+					{
+						RepServerPort* msg = static_cast<RepServerPort*>((void*)(buffer_start + cursor));
+						char src_port_str[8] = "port";
+						if (strcmp(msg->flags, src_port_str) == 0)
+						{
+							m_client.sin_port = ntohs((u_short)msg->port);
+							if (connect(fd_, (const sockaddr*)&m_client, sizeof(m_client)) == -1)
+							{
+								OnConnect(false);
 
-			TcpReadTask* task = new TcpReadTask();
-			task->Init(onrecv_handler_, conn_idx_, buffer_start + cursor, len);
-			Scheduler::get_instance()->PushTask(task);
-			
+								SocketMgr::get_instance()->Disconnect(conn_idx_);
+							}
+							else
+							{
+								is_udp_connected_ = true;
+
+								// 连接成功
+								OnConnect(true);
+							}
+						}
+					}
+					else
+					{
+						SocketMgr::get_instance()->Disconnect(conn_idx_);
+					}
+
+					cursor += 4;
+				}
+				else
+				{
+					cursor += 4;
+
+					Guard guard(kcp_mutex_);
+
+					ikcp_input(p_kcp_, (const char*)(buffer_start + cursor), len);
+					while (true)
+					{
+						int ret_value = ikcp_recv(p_kcp_);
+						if (ret_value > 0)
+						{
+							continue;
+						}
+						else
+						{
+							break;
+						}
+					}
+
+				}
+			}
+			else
+			{
+				cursor += 4;
+
+				TcpReadTask* task = new TcpReadTask();
+				task->Init(onrecv_handler_, conn_idx_, buffer_start + cursor, len);
+				Scheduler::get_instance()->PushTask(task);
+			}
+
 			cursor += len;
 		}
 		else

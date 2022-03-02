@@ -369,13 +369,14 @@ uint32 SocketMgr::Connect( const string& ip, uint16 port,
 						uint32 recvbuffersize)
 {
 	uint32 conn_idx = MakeGeneralConnID();
-	Socket *s = new Socket(	0,
+	Socket *s = new Socket( SOCKET_TYPE_TCP,
+							0,
 							conn_idx,
 							onconnected_handler, 
 							onclose_handler, 
 							onrecv_handler,
 							sendbuffersize, 
-							recvbuffersize);
+							recvbuffersize );
 
 	s->status_mutex_.Lock();
 	s->status_ = socket_status_connecting;
@@ -421,7 +422,8 @@ uint32 SocketMgr::ConnectEx( const string& ip, uint16 port,
 						  bool is_parse_package)
 {
 	uint32 conn_idx = MakeGeneralConnID();
-	Socket *s = new Socket(	0,
+	Socket *s = new Socket(SOCKET_TYPE_TCP,
+		0,
 		conn_idx,
 		onconnected_handler, 
 		onclose_handler, 
@@ -448,16 +450,18 @@ uint32 SocketMgr::ConnectEx( const string& ip, uint16 port,
 	}
 }
 
-void SocketMgr::Accept( SOCKET aSocket, 
-					   sockaddr_in& address, 
-					   const HandleInfo onconnected_handler,
-					   const HandleInfo onclose_handler,
-					   const HandleInfo onrecv_handler,
-					   uint32 sendbuffersize, 
-					   uint32 recvbuffersize,
-					   bool is_parse_package)
+void SocketMgr::Accept(
+	SOCKET aSocket, 
+	sockaddr_in& address, 
+	const HandleInfo onconnected_handler,
+	const HandleInfo onclose_handler,
+	const HandleInfo onrecv_handler,
+	uint32 sendbuffersize, 
+	uint32 recvbuffersize,
+	bool is_parse_package)
 {
-	Socket *s = new Socket( aSocket, 
+	Socket *s = new Socket(SOCKET_TYPE_TCP,
+		aSocket,
 		MakeGeneralConnID(),
 		onconnected_handler,
 		onclose_handler,
@@ -486,6 +490,100 @@ void SocketMgr::Accept( SOCKET aSocket,
 		s->status_mutex_.UnLock();
 
 		RemoveSocket(s->GetConnectIdx());
+	}
+}
+
+bool SocketMgr::AcceptUDP(
+	sockaddr_in& remote_address, 
+	const HandleInfo onconnected_handler, 
+	const HandleInfo onclose_handler, 
+	const HandleInfo onrecv_handler, 
+	uint32 sendbuffersize, 
+	uint32 recvbuffersize, 
+	uint16& local_port)
+{
+	// 分配一个临时的socket
+	string ip = inet_ntoa(remote_address.sin_addr);
+	uint16 port = htons(remote_address.sin_port);
+
+	uint32 conn_idx = ConnectUDP(ip, port, local_port,
+		onconnected_handler,
+		onclose_handler,
+		onrecv_handler,
+		sendbuffersize,
+		recvbuffersize,
+		true);
+
+	if (conn_idx != INVALID_INDEX)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+uint32 SocketMgr::ConnectUDP(
+	const string& ip, 
+	uint16 port, 
+	uint16& local_port, 
+	const HandleInfo onconnected_handler, 
+	const HandleInfo onclose_handler, 
+	const HandleInfo onrecv_handler, 
+	uint32 sendbuffersize, 
+	uint32 recvbuffersize, 
+	bool is_server_build /*= false*/)
+{
+	uint32 conn_idx = MakeGeneralConnID();
+
+	Socket* s = new Socket(SOCKET_TYPE_UDP,
+		0,
+		conn_idx,
+		onconnected_handler,
+		onclose_handler,
+		onrecv_handler,
+		sendbuffersize,
+		recvbuffersize);
+
+	s->status_mutex_.Lock();
+	s->status_ = socket_status_connecting;
+
+	bool ret = s->ConnectUDP(ip.c_str(), port, local_port);
+	if (!ret)
+	{
+		s->status_mutex_.UnLock();
+		delete s;
+		s = NULL;
+		return INVALID_INDEX;
+	}
+	else
+	{
+		AddSocket(s); //加入socket列表
+		s->status_ = socket_status_connectted;
+
+		bool ret = s->SetupReadEvent();
+		if (ret) //投递一个读成功
+		{
+			s->status_mutex_.UnLock();
+
+			if (is_server_build) //如果是服务器主动创建的
+			{
+				s->is_udp_connected_ = true;
+				s->OnConnect(true);
+			}
+
+			return conn_idx;
+		}
+		else
+		{
+			SocketOps::CloseSocket(s->GetFd()); //直接调用关闭closesocket
+			s->status_ = socket_status_closed;
+			s->OnConnect(false);
+			s->status_mutex_.UnLock();
+			RemoveSocket(s->GetConnectIdx());
+			return INVALID_INDEX;
+		}
 	}
 }
 

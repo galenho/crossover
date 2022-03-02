@@ -17,6 +17,8 @@
 int luaopen_lua_crossover(lua_State* L);
 int luaopen_lua_tcpserver(lua_State* L);
 int luaopen_lua_tcpclient(lua_State* L);
+int luaopen_lua_udpserver(lua_State* L);
+int luaopen_lua_udpclient(lua_State* L);
 int luaopen_lua_httpclient(lua_State* L);
 int luaopen_lua_mysql(lua_State* L);
 int luaopen_lua_mongo(lua_State* L);

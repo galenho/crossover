@@ -298,6 +298,304 @@ int lua_tcpclient_destroy(lua_State* L)
 }
 
 //-------------------------------------------------------------------------------------
+int lua_udpserver_new(lua_State* L)
+{
+	udpserver_t* t = (udpserver_t*)lua_newuserdata(L, sizeof(*t));
+	t->server = new UDPServer();
+
+	luaL_getmetatable(L, "udpserver");
+	lua_setmetatable(L, -2);
+
+	return 1;
+}
+
+int lua_udpserver_start(lua_State* L)
+{
+	int count = lua_gettop(L);
+	if (count == 8)
+	{
+		check_param(L, 8, "usnfffnn");
+	}
+	else if (count == 9)
+	{
+		check_param(L, 9, "usnfffnnb");
+	}
+	else if (count == 10)
+	{
+		check_param(L, 10, "usnfffnnbf");
+	}
+	else if (count == 11)
+	{
+		check_param(L, 11, "usnfffnnbff");
+	}
+	else
+	{
+		check_param(L, 12, "usnfffnnbfff");
+	}
+
+	udpserver_t* t = (udpserver_t*)luaL_checkudata(L, 1, "udpserver");
+
+	const char* ip = lua_tostring(L, 2);
+	uint16 port = (uint16)lua_tointeger(L, 3);
+
+	HandleInfo onconnected_handler;
+	int fun_onconn_id = toluafix_ref_function(L, 4);
+	onconnected_handler.fun_id = fun_onconn_id;
+
+	HandleInfo onclose_handler;
+	int fun_onclose_id = toluafix_ref_function(L, 5);
+	onclose_handler.fun_id = fun_onclose_id;
+
+	HandleInfo onrecv_handler;
+	int fun_onrecv_id = toluafix_ref_function(L, 6);
+	onrecv_handler.fun_id = fun_onrecv_id;
+
+	uint32 sendbuffersize = (uint32)lua_tointeger(L, 7);
+	uint32 recvbuffersize = (uint32)lua_tointeger(L, 8);
+
+	bool is_parse_package = true;
+	if (count > 8)
+	{
+		is_parse_package = (bool)lua_toboolean(L, 9);
+	}
+
+	if (count > 9)
+	{
+		onconnected_handler.param_id = toluafix_ref_param(L, 9);
+	}
+
+	if (count > 10)
+	{
+		onclose_handler.param_id = toluafix_ref_param(L, 10);
+	}
+
+	if (count > 11)
+	{
+		onrecv_handler.param_id = toluafix_ref_param(L, 11);
+	}
+
+	t->server->Start(ip, port, onconnected_handler, onclose_handler, onrecv_handler, sendbuffersize, recvbuffersize);
+	return 0;
+}
+
+int lua_udpserver_close(lua_State* L)
+{
+	check_param(L, 1, "u");
+
+	udpserver_t* t = (udpserver_t*)luaL_checkudata(L, 1, "udpserver");
+	t->server->Close();
+
+	return 0;
+}
+
+int lua_udpserver_send(lua_State* L)
+{
+	check_param(L, 4, "unsn");
+
+	udpserver_t* t = (udpserver_t*)luaL_checkudata(L, 1, "udpserver");
+	uint32 conn_idx = (uint32)lua_tointeger(L, 2);
+	const char* msg = lua_tostring(L, 3);
+	uint32 len = (uint32)lua_tointeger(L, 4);
+	t->server->SendMsg(conn_idx, (char*)msg, len);
+
+	return 0;
+}
+
+int lua_udpserver_sendmsg(lua_State* L)
+{
+	check_param(L, 4, "unsn");
+
+	udpserver_t* t = (udpserver_t*)luaL_checkudata(L, 1, "udpserver");
+	uint32 conn_idx = (uint32)lua_tointeger(L, 2);
+	const char* msg = lua_tostring(L, 3);
+	uint32 len = (uint32)lua_tointeger(L, 4);
+	t->server->SendMsg(conn_idx, (char*)msg, len);
+
+	return 0;
+}
+
+int lua_udpserver_disconnect(lua_State* L)
+{
+	check_param(L, 2, "un");
+
+	udpserver_t* t = (udpserver_t*)luaL_checkudata(L, 1, "udpserver");
+	uint32 conn_idx = (uint32)lua_tointeger(L, 2);
+	t->server->Disconnect(conn_idx);
+
+	return 0;
+}
+
+int lua_udpserver_getipaddress(lua_State* L)
+{
+	check_param(L, 2, "un");
+
+	udpserver_t* t = (udpserver_t*)luaL_checkudata(L, 1, "udpserver");
+	uint32 conn_idx = (uint32)lua_tointeger(L, 2);
+	char* ip = t->server->GetIpAddress(conn_idx);
+	lua_pushstring(L, ip);
+
+	return 1;
+}
+
+int lua_udpserver_destroy(lua_State* L)
+{
+	check_param(L, 1, "u");
+
+	udpserver_t* t = (udpserver_t*)luaL_checkudata(L, 1, "udpserver");
+	if (t->server)
+	{
+		delete t->server;
+		t->server = NULL;
+	}
+
+	return 0;
+}
+
+//-------------------------------------------------------------------------------------
+int lua_udpclient_new(lua_State* L)
+{
+	udpclient_t* t = (udpclient_t*)lua_newuserdata(L, sizeof(*t));
+	t->client = new UDPClient();
+
+	luaL_getmetatable(L, "udpclient");
+	lua_setmetatable(L, -2);
+
+	return 1;
+}
+
+int lua_udpclient_connect(lua_State* L)
+{
+	int count = lua_gettop(L);
+	if (count == 8)
+	{
+		check_param(L, 8, "usnfffnn");
+	}
+	else if (count == 9)
+	{
+		check_param(L, 9, "usnfffnnb");
+	}
+	else if (count == 10)
+	{
+		check_param(L, 10, "usnfffnnbt");
+	}
+	else if (count == 11)
+	{
+		check_param(L, 11, "usnfffnnbtt");
+	}
+	else
+	{
+		check_param(L, 12, "usnfffnnbttt");
+	}
+
+	udpclient_t* t = (udpclient_t*)luaL_checkudata(L, 1, "udpclient");
+	const char* ip = lua_tostring(L, 2);
+	uint16 port = (uint16)lua_tointeger(L, 3);
+
+	HandleInfo onconnected_handler;
+	int fun_onconn_id = toluafix_ref_function(L, 4);
+	onconnected_handler.fun_id = fun_onconn_id;
+
+	HandleInfo onclose_handler;
+	int fun_onclose_id = toluafix_ref_function(L, 5);
+	onclose_handler.fun_id = fun_onclose_id;
+
+	HandleInfo onrecv_handler;
+	int fun_onrecv_id = toluafix_ref_function(L, 6);
+	onrecv_handler.fun_id = fun_onrecv_id;
+
+	uint32 sendbuffersize = (uint32)lua_tointeger(L, 7);
+	uint32 recvbuffersize = (uint32)lua_tointeger(L, 8);
+
+	bool is_parse_package = true;
+	if (count > 8)
+	{
+		is_parse_package = (bool)lua_toboolean(L, 9);
+	}
+
+	if (count > 9)
+	{
+		onconnected_handler.param_id = toluafix_ref_param(L, 10);
+	}
+
+	if (count > 10)
+	{
+		onclose_handler.param_id = toluafix_ref_param(L, 11);
+	}
+
+	if (count > 11)
+	{
+		onrecv_handler.param_id = toluafix_ref_param(L, 12);
+	}
+
+	uint16 local_port = 0;
+	t->client->Connect(ip, port, local_port, onconnected_handler, onclose_handler, onrecv_handler, sendbuffersize, recvbuffersize);
+
+	return 0;
+}
+
+int lua_udpclient_send(lua_State* L)
+{
+	check_param(L, 4, "unsn");
+
+	udpclient_t* t = (udpclient_t*)luaL_checkudata(L, 1, "udpclient");
+	uint32 conn_idx = (uint32)lua_tointeger(L, 2);
+	const char* msg = lua_tostring(L, 3);
+	uint32 len = (uint32)lua_tointeger(L, 4);
+	t->client->SendMsg(conn_idx, (char*)msg, len);
+
+	return 0;
+}
+
+int lua_udpclient_sendmsg(lua_State* L)
+{
+	check_param(L, 4, "unsn");
+
+	udpclient_t* t = (udpclient_t*)luaL_checkudata(L, 1, "udpclient");
+	uint32 conn_idx = (uint32)lua_tointeger(L, 2);
+	const char* msg = lua_tostring(L, 3);
+	uint32 len = (uint32)lua_tointeger(L, 4);
+	t->client->SendMsg(conn_idx, (char*)msg, len);
+
+	return 0;
+}
+
+int lua_udpclient_disconnect(lua_State* L)
+{
+	check_param(L, 2, "un");
+
+	udpclient_t* t = (udpclient_t*)luaL_checkudata(L, 1, "udpclient");
+	uint32 conn_idx = (uint32)lua_tointeger(L, 2);
+	t->client->Disconnect(conn_idx);
+
+	return 0;
+}
+
+int lua_udpclient_getipaddress(lua_State* L)
+{
+	check_param(L, 2, "un");
+
+	udpclient_t* t = (udpclient_t*)luaL_checkudata(L, 1, "udpclient");
+	uint32 conn_idx = (uint32)lua_tointeger(L, 2);
+	char* ip = t->client->GetIpAddress(conn_idx);
+	lua_pushstring(L, ip);
+	return 1;
+}
+
+int lua_udpclient_destroy(lua_State* L)
+{
+	check_param(L, 1, "u");
+
+	udpclient_t* t = (udpclient_t*)luaL_checkudata(L, 1, "udpclient");
+	if (t->client)
+	{
+		delete t->client;
+		t->client = NULL;
+	}
+
+	return 0;
+}
+
+//-------------------------------------------------------------------------------------
 int lua_httpclient_new(lua_State* L)
 {
 	httpclient_t* t = (httpclient_t*)lua_newuserdata(L, sizeof(*t));

@@ -15,7 +15,6 @@ class TCPServer_impl
 {
 public:
 	TCPServer_impl();
-
 	~TCPServer_impl();
 
 	bool Start(

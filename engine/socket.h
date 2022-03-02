@@ -13,6 +13,7 @@
 #include "referable.h"
 #include "scheduler.h"
 #include "sequence_buffer.h"
+#include "ikcp.h"
 
 #ifdef CONFIG_USE_EPOLL
 #include "socket_mgr_linux.h"
@@ -36,7 +37,8 @@ public:
 	Socket( SOCKET wakeup_fd, SocketIOThread* work_thread );
 #endif
 
-	Socket( SOCKET fd, 
+	Socket( SocketType socket_type,
+			SOCKET fd, 
 			uint32 conn_idx,
 			const HandleInfo onconnected_handler,
 			const HandleInfo onclose_handler,
@@ -53,10 +55,11 @@ public:
 	bool Connect(const char* address, uint16 port);
 	bool ConnectEx(const char* address, uint16 port);
 
+	bool ConnectUDP(const char* address, uint16 port, uint16& local_port);
+
 	// Accept from the already-set fd.
 	void Accept(sockaddr_in* address);
 
-	
 	// Locks sending mutex, adds bytes, unlocks mutex.
 	bool Send(const void* Bytes, uint32 Size);
 	bool SendMsg(const void* Bytes, uint32 Size);
@@ -116,35 +119,6 @@ public:
 		return m_client.sin_addr;
 	}
 
-
-public:
-	sequence_buffer readBuffer;
-	sequence_buffer writeBuffer;
-	Mutex write_mutex_;
-	
-	SocketStatus status_;
-	Mutex status_mutex_;
-
-	uint32 recvbuffersize_;
-
-
-	bool is_parse_package_;
-	bool is_tcp_client_;
-
-	SocketIOThread* work_thread_;
-
-protected:
-	SOCKET fd_;
-	uint32 conn_idx_;
-	sockaddr_in m_client;
-
-	HandleInfo onconnected_handler_;
-	HandleInfo onclose_handler_;
-	HandleInfo onrecv_handler_;
-
-private:
-	int32 write_lock_;
-
 public:
 	inline void IncSendLock()
 	{
@@ -192,6 +166,38 @@ public:
 
 #endif
 
+public:
+	sequence_buffer readBuffer;
+	sequence_buffer writeBuffer;
+	Mutex write_mutex_;
+
+	SocketStatus status_;
+	Mutex status_mutex_;
+
+	uint32 recvbuffersize_;
+
+	bool is_udp_connected_; // UDPר�е�״̬
+	ikcpcb* p_kcp_; // --own
+	Mutex kcp_mutex_;
+
+	bool is_parse_package_;
+	bool is_tcp_client_;
+
+	SocketIOThread* work_thread_;
+
+protected:
+	SOCKET fd_;
+	uint32 conn_idx_;
+	sockaddr_in m_client;
+
+	SocketType socket_type_;
+
+	HandleInfo onconnected_handler_;
+	HandleInfo onclose_handler_;
+	HandleInfo onrecv_handler_;
+
+private:
+	int32 write_lock_;
 };
 
 #endif // _SOCKET_H_

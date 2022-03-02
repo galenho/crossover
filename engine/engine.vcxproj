@@ -265,6 +265,7 @@ RevisionExtractor.exe
     <ClCompile Include="event.cpp" />
     <ClCompile Include="http_accessor.cpp" />
     <ClCompile Include="http_accessor_impl.cpp" />
+    <ClCompile Include="ikcp.cpp" />
     <ClCompile Include="lua_bson.cpp" />
     <ClCompile Include="lua_fix.cpp" />
     <ClCompile Include="mongo_connection.cpp" />
@@ -292,6 +293,10 @@ RevisionExtractor.exe
     <ClCompile Include="tcp_server.cpp" />
     <ClCompile Include="tcp_server_impl.cpp" />
     <ClCompile Include="thread_base.cpp" />
+    <ClCompile Include="udp_client.cpp" />
+    <ClCompile Include="udp_client_impl.cpp" />
+    <ClCompile Include="udp_server.cpp" />
+    <ClCompile Include="udp_server_impl.cpp" />
     <ClCompile Include="work_thread.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -320,9 +325,12 @@ RevisionExtractor.exe
     <ClInclude Include="..\include\tcp_server.h" />
     <ClInclude Include="..\include\thread_base.h" />
     <ClInclude Include="..\include\timer.h" />
+    <ClInclude Include="..\include\udp_client.h" />
+    <ClInclude Include="..\include\udp_server.h" />
     <ClInclude Include="connection.h" />
     <ClInclude Include="database_impl.h" />
     <ClInclude Include="http_accessor_impl.h" />
+    <ClInclude Include="ikcp.h" />
     <ClInclude Include="mongo_connection.h" />
     <ClInclude Include="mongo_database_impl.h" />
     <ClInclude Include="network.h" />
@@ -338,6 +346,10 @@ RevisionExtractor.exe
     <ClInclude Include="tcp_listen_socket_linux.h" />
     <ClInclude Include="tcp_listen_socket_win32.h" />
     <ClInclude Include="tcp_server_impl.h" />
+    <ClInclude Include="udp_client_impl.h" />
+    <ClInclude Include="udp_listen_socket_linux.h" />
+    <ClInclude Include="udp_listen_socket_win32.h" />
+    <ClInclude Include="udp_server_impl.h" />
     <ClInclude Include="work_thread.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

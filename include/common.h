@@ -291,5 +291,20 @@ struct HandleInfo
 	}
 };
 
+#pragma pack(push, 1)
+struct RepServerPort
+{
+	uint32 package_len;
+	char flags[5]; //"port"
+	uint16 port;
+
+	RepServerPort()
+	{
+		package_len = sizeof(*this) - sizeof(package_len);
+		strcpy_e(flags, sizeof(flags), "port");
+		port = 0;
+	}
+};
+#pragma pack(pop)
 
 #endif //_COMMON_H_

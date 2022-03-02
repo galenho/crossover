@@ -52,6 +52,9 @@
     <Filter Include="lua">
       <UniqueIdentifier>{ad63a2e8-9719-40d9-8239-db2e42a801d6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="network\impl\udp">
+      <UniqueIdentifier>{99c2ed67-0d7e-4735-817a-0d804756cb10}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="tcp_client_impl.cpp">
@@ -167,6 +170,21 @@
     </ClCompile>
     <ClCompile Include="event.cpp">
       <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="udp_client_impl.cpp">
+      <Filter>network\impl\udp</Filter>
+    </ClCompile>
+    <ClCompile Include="udp_server_impl.cpp">
+      <Filter>network\impl\udp</Filter>
+    </ClCompile>
+    <ClCompile Include="udp_client.cpp">
+      <Filter>interface</Filter>
+    </ClCompile>
+    <ClCompile Include="udp_server.cpp">
+      <Filter>interface</Filter>
+    </ClCompile>
+    <ClCompile Include="ikcp.cpp">
+      <Filter>util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -299,6 +317,27 @@
     </ClInclude>
     <ClInclude Include="..\include\event.h">
       <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="udp_client_impl.h">
+      <Filter>network\impl\udp</Filter>
+    </ClInclude>
+    <ClInclude Include="udp_server_impl.h">
+      <Filter>network\impl\udp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\udp_client.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\udp_server.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="udp_listen_socket_linux.h">
+      <Filter>network\system\epoll</Filter>
+    </ClInclude>
+    <ClInclude Include="udp_listen_socket_win32.h">
+      <Filter>network\system\iocp</Filter>
+    </ClInclude>
+    <ClInclude Include="ikcp.h">
+      <Filter>util</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

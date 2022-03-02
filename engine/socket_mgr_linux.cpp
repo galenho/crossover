@@ -602,6 +602,107 @@ uint32 SocketMgr::ConnectEx( const string& ip, uint16 port,
 
 	return conn_idx;
 }
+//------------------------------------------------------------------------------
+uint32 SocketMgr::ConnectUDP(const string& ip, uint16 port, uint16& local_port,
+	const connected_handler_type onconnected_handler,
+	const close_handler_type onclose_handler,
+	const recv_handler_type onrecv_handler,
+	uint32 sendbuffersize,
+	uint32 recvbuffersize,
+	bool is_server_build /*= false*/)
+{
+	uint32 conn_idx = MakeGeneralConnID();
+
+	Socket* s = new Socket(SOCKET_TYPE_UDP,
+		0,
+		conn_idx,
+		onconnected_handler,
+		onclose_handler,
+		onrecv_handler,
+		sendbuffersize,
+		recvbuffersize);
+
+	s->status_mutex_.Lock();
+	s->status_ = socket_status_connecting;
+
+	bool ret = s->ConnectUDP(ip.c_str(), port, local_port);
+	if (!ret)
+	{
+		s->status_mutex_.UnLock();
+		delete s;
+		s = NULL;
+		return INVALID_INDEX;
+	}
+	else
+	{
+		AddSocket(s); //加入socket列表
+
+		s->status_ = socket_status_connectted;
+		//----------------------------------------------------------------------------------------
+		// Add epoll event based on socket activity.
+		struct epoll_event ev;
+		memset(&ev, 0, sizeof(epoll_event));
+		ev.events = EPOLLOUT | EPOLLIN;
+		ev.events = ev.events | EPOLLERR | EPOLLHUP | EPOLLPRI | EPOLLET;
+		ev.data.ptr = s;
+
+		if (epoll_ctl(s->work_thread_->GetEpollFd(), EPOLL_CTL_ADD, s->GetFd(), &ev))
+		{
+			PRINTF_ERROR("Could not add event to epoll set on fd %u", s->GetFd());
+
+			SocketOps::CloseSocket(s->GetFd()); //直接调用关闭closesocket
+			s->status_ = socket_status_closed;
+			s->OnConnect(false);
+			s->status_mutex_.UnLock();
+			RemoveSocket(s->GetConnectIdx());
+
+			return INVALID_INDEX;
+		}
+		else
+		{
+			s->status_mutex_.UnLock();
+
+			if (is_server_build) //如果是服务器主动创建的
+			{
+				s->is_udp_connected_ = true;
+				s->OnConnect(true);
+			}
+
+			return conn_idx;
+		}
+
+	}
+}
+
+bool SocketMgr::AcceptUDP(sockaddr_in& remote_address,
+	const connected_handler_type onconnected_handler,
+	const close_handler_type onclose_handler,
+	const recv_handler_type onrecv_handler,
+	uint32 sendbuffersize,
+	uint32 recvbuffersize,
+	uint16& local_port)
+{
+	// 分配一个临时的socket
+	string ip = inet_ntoa(remote_address.sin_addr);
+	uint16 port = htons(remote_address.sin_port);
+
+	uint32 conn_idx = ConnectUDP(ip, port, local_port,
+		onconnected_handler,
+		onclose_handler,
+		onrecv_handler,
+		sendbuffersize,
+		recvbuffersize,
+		true);
+
+	if (conn_idx != INVALID_INDEX)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
 
 //------------------------------------------------------------------------------
 void SocketMgr::AddSocket(Socket* s)

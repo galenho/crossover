@@ -15,7 +15,6 @@ class TCPServer
 {
 public:
 	TCPServer();
-
 	~TCPServer();
 
 	bool Start(const string ip,
