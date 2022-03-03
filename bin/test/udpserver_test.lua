@@ -1,14 +1,25 @@
+package.path = package.path..";../?.lua"
+package.path = package.path..";../common/?.lua"
+package.path = package.path..";../common/hotfix/?.lua"
+package.path = package.path..";../common/lua-protobuf/?.lua"
+package.path = package.path..";../common/lua-xml/?.lua"
+package.path = package.path..";../config/?.lua"
+package.path = package.path..";../proto/?.lua"
+
+local util = require "util"
+
 server = udpserver.new()
 
 fun_connect = function(conn_idx, is_success)
-	print("onconnect"..conn_idx)
+	print("onconnect" .. conn_idx)
 end
 
 fun_close = function(conn_idx)
-	print("onclose"..conn_idx)
+	print("onclose" .. conn_idx)
 end
 
 fun_recv = function(conn_idx, data, len)
+    print("onrecv" .. len)
 	server:send(conn_idx, data, len)
 end
 

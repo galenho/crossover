@@ -14,11 +14,10 @@ public:
 	Referable();
 	virtual ~Referable();
 
-	void AddRef();
-	bool Release();
+	virtual void AddRef();
+	virtual bool Release();
 
-private:
-
+public:
 #ifdef WIN32
 	volatile long count_;
 #else

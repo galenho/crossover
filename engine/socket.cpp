@@ -55,6 +55,8 @@ Socket::Socket(SocketType socket_type,
 
 	write_lock_ = 0;
 
+	p_kcp_ = NULL;
+
 	work_thread_ = SocketMgr::get_instance()->get_free_work_thread();
 	SocketMgr::get_instance()->add_socket_ref(work_thread_);
 
@@ -68,6 +70,8 @@ Socket::Socket(SocketType socket_type,
 		else
 		{
 			fd_ = SocketOps::CreateUDPFileDescriptor();
+
+			Guard guard(kcp_mutex_);
 			p_kcp_ = ikcp_create(conn_idx, (void*)this);
 			p_kcp_->output = &Socket::udp_output;
 			p_kcp_->input = &Socket::udp_input;
@@ -78,7 +82,7 @@ Socket::Socket(SocketType socket_type,
 			// 第四个参数 resend为快速重传指标，设置为2
 			// 第五个参数 为是否禁用常规流控，这里禁止
 			//ikcp_nodelay(p_kcp_, 1, 10, 2, 1);
-			ikcp_nodelay(p_kcp_, 1, 2, 1, 1); // 设置成1次ACK跨越直接重传, 这样反应速度会更快. 内部时钟5毫秒.
+			ikcp_nodelay(p_kcp_, 1, 10, 2, 1); // 设置成1次ACK跨越直接重传, 这样反应速度会更快. 内部时钟5毫秒.
 		}
 	}
 
@@ -99,13 +103,29 @@ Socket::~Socket()
 	}
 }
 
+void Socket::AddRef()
+{
+	ref_mutex_.Lock();
+	Referable::AddRef();
+	ref_mutex_.UnLock();
+}
+
+bool Socket::Release()
+{
+	ref_mutex_.Lock();
+	bool ret = Referable::Release();
+	ref_mutex_.UnLock();
+
+	return ret;
+}
+
 void Socket::Update( uint32 cur_time )
 {
 	if (socket_type_ == SOCKET_TYPE_UDP)
 	{
+		Guard guard(kcp_mutex_);
 		if (is_udp_connected_ && p_kcp_)
 		{
-			Guard guard(kcp_mutex_);
 			ikcp_update(p_kcp_, cur_time);
 		}
 	}
@@ -465,11 +485,11 @@ void Socket::Disconnect()
 #endif
 }
 
-bool Socket::Send(const void* Bytes, uint32 Size)
+bool Socket::Send(const void* buff, uint32 len)
 {
 	write_mutex_.Lock();
 
-	bool ret = writeBuffer.Write(Bytes, Size);
+	bool ret = writeBuffer.Write(buff, len);
 	write_mutex_.UnLock();
 
 #ifdef CONFIG_USE_IOCP
@@ -492,12 +512,12 @@ bool Socket::Send(const void* Bytes, uint32 Size)
 	return ret;
 }
 
-bool Socket::SendMsg(const void* Bytes, uint32 Size)
+bool Socket::SendMsg(const void* buff, uint32 len)
 {
 	write_mutex_.Lock();
 
 	// 拼包
-	bool ret = writeBuffer.WriteMsg(&Size, 4, Bytes, Size);
+	bool ret = writeBuffer.WriteMsg(&len, 4, buff, len);
 	write_mutex_.UnLock();
 
 #ifdef CONFIG_USE_IOCP
@@ -520,10 +540,10 @@ bool Socket::SendMsg(const void* Bytes, uint32 Size)
 	return ret;
 }
 
-bool Socket::SendUDP(const void* Bytes, uint32 Size)
+bool Socket::SendUDP(const void* buff, uint32 len)
 {
 	Guard guard(kcp_mutex_);
-	int send_ret = ikcp_send(p_kcp_, (const char*)Bytes, Size);
+	int send_ret = ikcp_send(p_kcp_, (const char*)buff, len);
 	if (send_ret < 0)
 	{
 		return false;
@@ -534,7 +554,7 @@ bool Socket::SendUDP(const void* Bytes, uint32 Size)
 	}
 }
 
-int Socket::udp_output(const char* buf, int len, ikcpcb* kcp, void* user)
+int  Socket::udp_output(const char* buf, int len, ikcpcb* kcp, void* user)
 {
 	((Socket*)user)->send_udp_package(buf, len);
 	return 0;
@@ -545,7 +565,7 @@ void Socket::send_udp_package(const char* buf, int len)
 	SendMsg(buf, len);
 }
 
-int Socket::udp_input(const char* buf, int len, ikcpcb* kcp, void* user)
+int  Socket::udp_input(const char* buf, int len, ikcpcb* kcp, void* user)
 {
 	((Socket*)user)->on_udp_package_recv(buf, len);
 	return 0;
@@ -553,5 +573,7 @@ int Socket::udp_input(const char* buf, int len, ikcpcb* kcp, void* user)
 
 void Socket::on_udp_package_recv(const char* buf, int len)
 {
-	//onrecv_handler_(conn_idx_, buf, len);
+	TcpReadTask* task = new TcpReadTask();
+	task->Init(onrecv_handler_, conn_idx_, (char*)buf, len);
+	Scheduler::get_instance()->PushTask(task);
 }

@@ -49,6 +49,9 @@ public:
 
 	~Socket();
 
+	virtual void AddRef();
+	virtual bool Release();
+
 	void Update(uint32 cur_time);
 
 	// Open a connection to another machine.
@@ -61,10 +64,10 @@ public:
 	void Accept(sockaddr_in* address);
 
 	// Locks sending mutex, adds bytes, unlocks mutex.
-	bool Send(const void* Bytes, uint32 Size);
-	bool SendMsg(const void* Bytes, uint32 Size);
+	bool Send(const void* buff, uint32 len);
+	bool SendMsg(const void* buff, uint32 len);
 
-	bool SendUDP(const void* Bytes, uint32 Size);
+	bool SendUDP(const void* buff, uint32 len);
 
 	// Burst system - Pushes event to queue - do at the end of write events.
 	bool BurstPush();
@@ -198,6 +201,8 @@ public:
 	bool is_tcp_client_;
 
 	SocketIOThread* work_thread_;
+
+	Mutex ref_mutex_;
 
 protected:
 	SOCKET fd_;

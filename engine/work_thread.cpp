@@ -62,6 +62,7 @@ bool WorkThread::Run()
 			else
 			{
 				event_.Wait(time);
+				last_time = getMSTime();
 			}
 		}
 		
