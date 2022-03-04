@@ -293,6 +293,7 @@ RevisionExtractor.exe
     <ClCompile Include="tcp_server.cpp" />
     <ClCompile Include="tcp_server_impl.cpp" />
     <ClCompile Include="thread_base.cpp" />
+    <ClCompile Include="timer.cpp" />
     <ClCompile Include="udp_client.cpp" />
     <ClCompile Include="udp_client_impl.cpp" />
     <ClCompile Include="udp_server.cpp" />

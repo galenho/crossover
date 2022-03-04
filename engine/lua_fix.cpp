@@ -161,7 +161,6 @@ int generate_function_id()
 	return function_id;
 }
 
-
 int toluafix_ref_function(lua_State* L, int lo)
 {
 	if (!lua_isfunction(L, lo))

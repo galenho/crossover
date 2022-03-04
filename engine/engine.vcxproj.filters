@@ -186,6 +186,9 @@
     <ClCompile Include="ikcp.cpp">
       <Filter>util</Filter>
     </ClCompile>
+    <ClCompile Include="timer.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="tcp_client_impl.h">

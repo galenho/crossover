@@ -2,6 +2,7 @@
 #include "console_poller.h"
 #include "scheduler.h"
 #include "task.h"
+#include "lua_fix.h"
 
 initialiseSingleton(ConsolePoller);
 ConsolePoller::ConsolePoller()

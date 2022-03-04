@@ -184,19 +184,17 @@ bool SocketIOThread::Run()
 	OverlappedStruct* ov;
 	LPOVERLAPPED overlapped;
 
-	int ok; //galen: 返回值需要做处理
-
 	while (is_running_)
 	{
 #ifndef _WIN64
-		ok = GetQueuedCompletionStatus(cp, &bytes_transferred, (LPDWORD)&s, &overlapped, INFINITE);
+		int ret = GetQueuedCompletionStatus(cp, &bytes_transferred, (LPDWORD)&s, &overlapped, INFINITE);
 #else
-		ret = GetQueuedCompletionStatus(cp, &bytes_transferred, (PULONG_PTR)&s, &overlapped, INFINITE);
+		int ret = GetQueuedCompletionStatus(cp, &bytes_transferred, (PULONG_PTR)&s, &overlapped, INFINITE);
 #endif
 
 		DWORD last_error = ::GetLastError();
 
-		if (ok)
+		if (ret)
 		{
 			//(1) 如果函数从完成端口取出一个成功I/O操作的完成包，返回值为非0。
 			//    函数在指向lpNumberOfBytesTransferred, lpCompletionKey, and lpOverlapped的参数中存储相关信息。

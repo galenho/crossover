@@ -97,6 +97,12 @@ DBTask::DBTask()
 
 DBTask::~DBTask()
 {
+	if (rs_)
+	{
+		delete rs_;
+		rs_ = NULL;
+	}
+
 	if (handle_.fun_id > 0)
 	{
 		toluafix_remove_function_by_refid(g_lua_state, handle_.fun_id);
@@ -106,12 +112,6 @@ DBTask::~DBTask()
 	{
 		toluafix_remove_param_by_refid(g_lua_state, handle_.param_id);
 
-	}
-
-	if (rs_)
-	{
-		delete rs_;
-		rs_ = NULL;
 	}
 }
 
@@ -151,6 +151,12 @@ MongoDBTask::MongoDBTask()
 
 MongoDBTask::~MongoDBTask()
 {
+	if (rs_)
+	{
+		delete rs_;
+		rs_ = NULL;
+	}
+
 	if (handle_.fun_id > 0)
 	{
 		toluafix_remove_function_by_refid(g_lua_state, handle_.fun_id);
@@ -159,12 +165,6 @@ MongoDBTask::~MongoDBTask()
 	if (handle_.param_id > 0)
 	{
 		toluafix_remove_param_by_refid(g_lua_state, handle_.param_id);
-	}
-
-	if (rs_)
-	{
-		delete rs_;
-		rs_ = NULL;
 	}
 }
 
@@ -237,55 +237,17 @@ TcpConnectTask::TcpConnectTask()
 {
 	conn_idx_ = 0;
 	is_success_ = false;
-	is_tcp_client_ = false;
 }
 
 TcpConnectTask::~TcpConnectTask()
 {
-	if (!is_success_)
-	{
-		if (is_tcp_client_)
-		{
-			if (connect_handle_.fun_id > 0)
-			{
-				toluafix_remove_function_by_refid(g_lua_state, connect_handle_.fun_id);
-			}
-
-			if (connect_handle_.param_id > 0)
-			{
-				toluafix_remove_param_by_refid(g_lua_state, connect_handle_.param_id);
-			}
-
-			if (recv_handle_.fun_id > 0)
-			{
-				toluafix_remove_function_by_refid(g_lua_state, recv_handle_.fun_id);
-			}
-
-			if (recv_handle_.param_id > 0)
-			{
-				toluafix_remove_param_by_refid(g_lua_state, recv_handle_.param_id);
-			}
-
-			if (close_handle_.fun_id > 0)
-			{
-				toluafix_remove_function_by_refid(g_lua_state, close_handle_.fun_id);
-			}
-
-			if (close_handle_.param_id > 0)
-			{
-				toluafix_remove_param_by_refid(g_lua_state, close_handle_.param_id);
-			}
-		}
-	}
+	
 }
 
-void TcpConnectTask::Init(HandleInfo connect_handle, HandleInfo recv_handle, HandleInfo close_handle, uint32 conn_idx, bool is_success, bool is_tcp_client)
+void TcpConnectTask::Init(HandleInfo connect_handle, uint32 conn_idx, bool is_success)
 {
 	connect_handle_ = connect_handle;
-	recv_handle_ = recv_handle;
-	close_handle_ = close_handle;
 	conn_idx_ = conn_idx;
-	is_tcp_client_ = is_tcp_client;
 
 	is_success_ = is_success;
 }
@@ -359,52 +321,17 @@ void TcpReadTask::process()
 TcpCloseTask::TcpCloseTask()
 {
 	conn_idx_ = 0;
-	is_tcp_client_ = false;
 }
 
 TcpCloseTask::~TcpCloseTask()
 {
-	if (is_tcp_client_)
-	{
-		if (connect_handle_.fun_id > 0)
-		{
-			toluafix_remove_function_by_refid(g_lua_state, connect_handle_.fun_id);
-		}
-
-		if (connect_handle_.param_id > 0)
-		{
-			toluafix_remove_param_by_refid(g_lua_state, connect_handle_.param_id);
-		}
-
-		if (recv_handle_.fun_id > 0)
-		{
-			toluafix_remove_function_by_refid(g_lua_state, recv_handle_.fun_id);
-		}
-
-		if (recv_handle_.param_id > 0)
-		{
-			toluafix_remove_param_by_refid(g_lua_state, recv_handle_.param_id);
-		}
-
-		if (close_handle_.fun_id > 0)
-		{
-			toluafix_remove_function_by_refid(g_lua_state, close_handle_.fun_id);
-		}
-
-		if (close_handle_.param_id > 0)
-		{
-			toluafix_remove_param_by_refid(g_lua_state, close_handle_.param_id);
-		}
-	}
+	
 }
 
-void TcpCloseTask::Init(HandleInfo connect_handle, HandleInfo recv_handle, HandleInfo close_handle, uint32 conn_idx, bool is_tcp_client)
+void TcpCloseTask::Init(HandleInfo close_handle, uint32 conn_idx)
 {
-	connect_handle_ = connect_handle;
-	recv_handle_ = recv_handle;
 	close_handle_ = close_handle;
 	conn_idx_ = conn_idx;
-	is_tcp_client_ = is_tcp_client;
 }
 
 void TcpCloseTask::process()
@@ -434,7 +361,15 @@ HttpTask::HttpTask()
 
 HttpTask::~HttpTask()
 {
-	
+	if (handle_.fun_id > 0)
+	{
+		toluafix_remove_function_by_refid(g_lua_state, handle_.fun_id);
+	}
+
+	if (handle_.param_id > 0)
+	{
+		toluafix_remove_param_by_refid(g_lua_state, handle_.param_id);
+	}
 }
 
 void HttpTask::Init(HandleInfo handle, bool is_success, string& recv_buff, uint32 use_time)

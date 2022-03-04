@@ -340,7 +340,7 @@ void Socket::Accept(sockaddr_in* address)
 void Socket::OnConnect(bool is_success)
 {
 	TcpConnectTask* task = new TcpConnectTask();
-	task->Init(onconnected_handler_, onclose_handler_, onrecv_handler_, conn_idx_, is_success, is_tcp_client_);
+	task->Init(onconnected_handler_, conn_idx_, is_success);
 	Scheduler::get_instance()->PushTask(task);
 }
 
@@ -467,7 +467,7 @@ void Socket::OnRead()
 void Socket::OnDisconnect()
 {
 	TcpCloseTask* task = new TcpCloseTask();
-	task->Init(onconnected_handler_, onrecv_handler_, onclose_handler_, conn_idx_, is_tcp_client_);
+	task->Init(onconnected_handler_, conn_idx_);
 	Scheduler::get_instance()->PushTask(task);
 }
 

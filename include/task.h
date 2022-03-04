@@ -95,16 +95,13 @@ public:
 	TcpConnectTask();
 	virtual ~TcpConnectTask();
 
-	void Init(HandleInfo connect_handle, HandleInfo recv_handle, HandleInfo close_handle, uint32 conn_idx, bool is_success, bool is_tcp_client_);
+	void Init(HandleInfo connect_handle, uint32 conn_idx, bool is_success);
 	virtual void process();
 
 public:
 	HandleInfo connect_handle_;
-	HandleInfo recv_handle_;
-	HandleInfo close_handle_;
 	uint32 conn_idx_;
 	bool is_success_;
-	bool is_tcp_client_;
 };
 
 class TcpReadTask : public Task
@@ -129,15 +126,12 @@ public:
 	TcpCloseTask();
 	virtual ~TcpCloseTask();
 
-	void Init(HandleInfo conn_handle, HandleInfo recv_handle, HandleInfo close_handle, uint32 conn_idx, bool is_tcp_client);
+	void Init(HandleInfo close_handle, uint32 conn_idx);
 	virtual void process();
 
 public:
-	HandleInfo connect_handle_;
-	HandleInfo recv_handle_;
 	HandleInfo close_handle_;
 	uint32 conn_idx_;
-	bool is_tcp_client_;
 };
 //--------------------------------------------------------------
 

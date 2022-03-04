@@ -45,7 +45,7 @@ private:
 	
 	Event event_;
 
-	hash_map<uint32, IntervalTimer*> timer_list_;
+	hash_map<uint32, IntervalTimer*> timer_map_;
 	vector<IntervalTimer*> del_timer_list_;
 
 	uint32 cur_time_;
