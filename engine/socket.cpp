@@ -95,6 +95,13 @@ Socket::Socket(SocketType socket_type,
 
 Socket::~Socket()
 {
+	if (is_tcp_client_)
+	{
+		TcpClientDeleteTask* task = new TcpClientDeleteTask();
+		task->Init(onconnected_handler_, onrecv_handler_, onclose_handler_);
+		Scheduler::get_instance()->PushTask(task);
+	}
+	
 	//PRINTF_INFO("delete fd = %d, conn_idx = %d", fd_, conn_idx_);
 	if (work_thread_)
 	{

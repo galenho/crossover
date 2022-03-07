@@ -133,6 +133,21 @@ public:
 	HandleInfo close_handle_;
 	uint32 conn_idx_;
 };
+
+class TcpClientDeleteTask : public Task
+{
+public:
+	TcpClientDeleteTask();
+	virtual ~TcpClientDeleteTask();
+
+	void Init(HandleInfo connect_handle, HandleInfo recv_handle, HandleInfo close_handle);
+	virtual void process();
+
+public:
+	HandleInfo connect_handle_;
+	HandleInfo recv_handle_;
+	HandleInfo close_handle_;
+};
 //--------------------------------------------------------------
 
 class HttpTask : public Task

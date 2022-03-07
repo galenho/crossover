@@ -353,6 +353,56 @@ void TcpCloseTask::process()
 	}
 }
 
+TcpClientDeleteTask::TcpClientDeleteTask()
+{
+
+}
+
+TcpClientDeleteTask::~TcpClientDeleteTask()
+{
+	if (connect_handle_.fun_id > 0)
+	{
+		toluafix_remove_function_by_refid(g_lua_state, connect_handle_.fun_id);
+	}
+
+	if (connect_handle_.param_id > 0)
+	{
+		toluafix_remove_param_by_refid(g_lua_state, connect_handle_.param_id);
+	}
+
+	if (recv_handle_.fun_id > 0)
+	{
+		toluafix_remove_function_by_refid(g_lua_state, recv_handle_.fun_id);
+	}
+
+	if (recv_handle_.param_id > 0)
+	{
+		toluafix_remove_param_by_refid(g_lua_state, recv_handle_.param_id);
+	}
+
+	if (close_handle_.fun_id > 0)
+	{
+		toluafix_remove_function_by_refid(g_lua_state, close_handle_.fun_id);
+	}
+
+	if (close_handle_.param_id > 0)
+	{
+		toluafix_remove_param_by_refid(g_lua_state, close_handle_.param_id);
+	}
+}
+
+void TcpClientDeleteTask::Init(HandleInfo connect_handle, HandleInfo recv_handle, HandleInfo close_handle)
+{
+	connect_handle_ = connect_handle;
+	recv_handle_ = recv_handle;
+	close_handle_ = close_handle;
+}
+
+void TcpClientDeleteTask::process()
+{
+
+}
+
 HttpTask::HttpTask()
 {
 	is_success_ = false;
