@@ -1,5 +1,5 @@
 #include "timer.h"
-#include "lua_fix.h"
+#include "task.h"
 
 IntervalTimer::IntervalTimer(uint32 index, uint32 cur_time, uint32 interval, HandleInfo handler)
 {
@@ -12,16 +12,7 @@ IntervalTimer::IntervalTimer(uint32 index, uint32 cur_time, uint32 interval, Han
 
 IntervalTimer::~IntervalTimer()
 {
-	if (handler_.fun_id > 0)
-	{
-		toluafix_remove_function_by_refid(g_lua_state, handler_.fun_id);
-	}
-
-	if (handler_.param_id > 0)
-	{
-		toluafix_remove_param_by_refid(g_lua_state, handler_.param_id);
-
-	}
+	TimerTask::DeleteTimer(handler_, index_);
 }
 
 bool IntervalTimer::Update(uint32 cur_time)

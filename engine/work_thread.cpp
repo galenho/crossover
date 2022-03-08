@@ -95,9 +95,7 @@ bool WorkThread::Run()
 			bool ret = timer->Update(cur_time_);
 			if (ret)
 			{
-				TimerTask* task = new TimerTask();
-				task->Init(timer->handler_, timer->index_);
-				PushTask(task);
+				TimerTask::process(timer->handler_, timer->index_);
 			}
 		}
 		
@@ -112,6 +110,11 @@ bool WorkThread::Run()
 			delete task;
 			task = NULL;
 		}
+
+		//------------------------------------------------------------------------
+		// (3) 处理Socket
+		//------------------------------------------------------------------------
+		SocketMgr::get_instance()->Update(cur_time_);
 	}
 
 	// 线程结束运行

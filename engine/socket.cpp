@@ -11,7 +11,7 @@
 #ifdef CONFIG_USE_EPOLL
 Socket::Socket( SOCKET wakeup_fd, SocketIOThread* work_thread )
 {
-	is_tcp_client_ = false;
+	is_client_ = false;
 	fd_ = wakeup_fd;
 	work_thread_ = work_thread;
 }
@@ -31,11 +31,11 @@ Socket::Socket(SocketType socket_type,
 
 	if (fd == 0) //说明是TcpClient连接
 	{
-		is_tcp_client_ = true;
+		is_client_ = true;
 	}
 	else //说明是TcpServer连接
 	{
-		is_tcp_client_ = false;
+		is_client_ = false;
 	}
 
 	is_parse_package_ = is_parse_package;
@@ -95,14 +95,14 @@ Socket::Socket(SocketType socket_type,
 
 Socket::~Socket()
 {
-	if (is_tcp_client_)
+	//PRINTF_INFO("delete fd = %d, conn_idx = %d", fd_, conn_idx_);
+	if (is_client_)
 	{
-		TcpClientDeleteTask* task = new TcpClientDeleteTask();
+		SocketClientDeleteTask* task = new SocketClientDeleteTask();
 		task->Init(onconnected_handler_, onrecv_handler_, onclose_handler_);
 		Scheduler::get_instance()->PushTask(task);
 	}
-	
-	//PRINTF_INFO("delete fd = %d, conn_idx = %d", fd_, conn_idx_);
+
 	if (work_thread_)
 	{
 		SocketMgr::get_instance()->remove_socket_ref(work_thread_);
@@ -346,7 +346,7 @@ void Socket::Accept(sockaddr_in* address)
 
 void Socket::OnConnect(bool is_success)
 {
-	TcpConnectTask* task = new TcpConnectTask();
+	SocketConnectTask* task = new SocketConnectTask();
 	task->Init(onconnected_handler_, conn_idx_, is_success);
 	Scheduler::get_instance()->PushTask(task);
 }
@@ -362,7 +362,7 @@ void Socket::OnRead()
 	// 不需要解包
 	if (!is_parse_package_)
 	{
-		TcpReadTask* task = new TcpReadTask();
+		SocketReadTask* task = new SocketReadTask();
 		task->Init(onrecv_handler_, conn_idx_, buffer_start, packet_len);
 		Scheduler::get_instance()->PushTask(task);
 
@@ -452,7 +452,7 @@ void Socket::OnRead()
 			{
 				cursor += 4;
 
-				TcpReadTask* task = new TcpReadTask();
+				SocketReadTask* task = new SocketReadTask();
 				task->Init(onrecv_handler_, conn_idx_, buffer_start + cursor, len);
 				Scheduler::get_instance()->PushTask(task);
 			}
@@ -473,7 +473,7 @@ void Socket::OnRead()
 
 void Socket::OnDisconnect()
 {
-	TcpCloseTask* task = new TcpCloseTask();
+	SocketCloseTask* task = new SocketCloseTask();
 	task->Init(onconnected_handler_, conn_idx_);
 	Scheduler::get_instance()->PushTask(task);
 }
@@ -580,7 +580,7 @@ int  Socket::udp_input(const char* buf, int len, ikcpcb* kcp, void* user)
 
 void Socket::on_udp_package_recv(const char* buf, int len)
 {
-	TcpReadTask* task = new TcpReadTask();
+	SocketReadTask* task = new SocketReadTask();
 	task->Init(onrecv_handler_, conn_idx_, (char*)buf, len);
 	Scheduler::get_instance()->PushTask(task);
 }

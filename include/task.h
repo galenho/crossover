@@ -12,6 +12,15 @@
 #include "database_defines.h"
 #include "mongo_task.h"
 
+class TimerTask
+{
+public:
+	static void process(HandleInfo handle, uint32 index);
+	static void DeleteTimer(HandleInfo handle, uint32 index);
+};
+
+//--------------------------------------------------------------
+
 class Task
 {
 public:
@@ -21,24 +30,6 @@ public:
 public:
 	virtual void process() = 0;
 };
-
-//--------------------------------------------------------------
-
-class TimerTask : public Task
-{
-public:
-	TimerTask();
-	virtual ~TimerTask();
-
-	void Init(HandleInfo handle, uint32 index);
-
-	virtual void process();
-
-public:
-	HandleInfo handle_;
-	uint32 index_;
-};
-//--------------------------------------------------------------
 
 class InputTask : public Task
 {
@@ -89,11 +80,11 @@ public:
 };
 //--------------------------------------------------------------
 
-class TcpConnectTask : public Task
+class SocketConnectTask : public Task
 {
 public:
-	TcpConnectTask();
-	virtual ~TcpConnectTask();
+	SocketConnectTask();
+	virtual ~SocketConnectTask();
 
 	void Init(HandleInfo connect_handle, uint32 conn_idx, bool is_success);
 	virtual void process();
@@ -104,11 +95,11 @@ public:
 	bool is_success_;
 };
 
-class TcpReadTask : public Task
+class SocketReadTask : public Task
 {
 public:
-	TcpReadTask();
-	virtual ~TcpReadTask();
+	SocketReadTask();
+	virtual ~SocketReadTask();
 
 	void Init(HandleInfo handle, uint32 conn_idx, char* data, uint32 data_len);
 	virtual void process();
@@ -120,11 +111,11 @@ public:
 	uint32 data_len_;
 };
 
-class TcpCloseTask : public Task
+class SocketCloseTask : public Task
 {
 public:
-	TcpCloseTask();
-	virtual ~TcpCloseTask();
+	SocketCloseTask();
+	virtual ~SocketCloseTask();
 
 	void Init(HandleInfo close_handle, uint32 conn_idx);
 	virtual void process();
@@ -134,11 +125,11 @@ public:
 	uint32 conn_idx_;
 };
 
-class TcpClientDeleteTask : public Task
+class SocketClientDeleteTask : public Task
 {
 public:
-	TcpClientDeleteTask();
-	virtual ~TcpClientDeleteTask();
+	SocketClientDeleteTask();
+	virtual ~SocketClientDeleteTask();
 
 	void Init(HandleInfo connect_handle, HandleInfo recv_handle, HandleInfo close_handle);
 	virtual void process();

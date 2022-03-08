@@ -19,6 +19,38 @@ void LuaCall(lua_State* L, int nargs)
 	//stack_dump(L);
 }
 
+void TimerTask::process(HandleInfo handle, uint32 index)
+{
+	if (handle.fun_id > 0)
+	{
+		toluafix_get_function_by_refid(g_lua_state, handle.fun_id);
+		lua_pushinteger(g_lua_state, index);
+
+		if (handle.param_id > 0)
+		{
+			toluafix_get_param_by_refid(g_lua_state, handle.param_id);
+			LuaCall(g_lua_state, 2);
+		}
+		else
+		{
+			LuaCall(g_lua_state, 1);
+		}
+	}
+}
+
+void TimerTask::DeleteTimer(HandleInfo handle, uint32 index)
+{
+	if (handle.fun_id > 0)
+	{
+		toluafix_remove_function_by_refid(g_lua_state, handle.fun_id);
+	}
+
+	if (handle.param_id > 0)
+	{
+		toluafix_remove_param_by_refid(g_lua_state, handle.param_id);
+	}
+}
+
 Task::Task()
 {
 	
@@ -27,41 +59,6 @@ Task::Task()
 Task::~Task()
 {
 	
-}
-
-TimerTask::TimerTask()
-{
-	index_ = 0;
-}
-
-TimerTask::~TimerTask()
-{
-	
-}
-
-void TimerTask::Init(HandleInfo handle, uint32 index)
-{
-	handle_ = handle;
-	index_ = index;
-}
-
-void TimerTask::process()
-{
-	if (handle_.fun_id > 0)
-	{
-		toluafix_get_function_by_refid(g_lua_state, handle_.fun_id);
-		lua_pushinteger(g_lua_state, index_);
-
-		if (handle_.param_id > 0)
-		{
-			toluafix_get_param_by_refid(g_lua_state, handle_.param_id);
-			LuaCall(g_lua_state, 2);
-		}
-		else
-		{
-			LuaCall(g_lua_state, 1);
-		}
-	}
 }
 
 InputTask::InputTask()
@@ -233,18 +230,18 @@ void MongoDBTask::process()
 	}
 }
 
-TcpConnectTask::TcpConnectTask()
+SocketConnectTask::SocketConnectTask()
 {
 	conn_idx_ = 0;
 	is_success_ = false;
 }
 
-TcpConnectTask::~TcpConnectTask()
+SocketConnectTask::~SocketConnectTask()
 {
 	
 }
 
-void TcpConnectTask::Init(HandleInfo connect_handle, uint32 conn_idx, bool is_success)
+void SocketConnectTask::Init(HandleInfo connect_handle, uint32 conn_idx, bool is_success)
 {
 	connect_handle_ = connect_handle;
 	conn_idx_ = conn_idx;
@@ -252,7 +249,7 @@ void TcpConnectTask::Init(HandleInfo connect_handle, uint32 conn_idx, bool is_su
 	is_success_ = is_success;
 }
 
-void TcpConnectTask::process()
+void SocketConnectTask::process()
 {
 	if (connect_handle_.fun_id > 0)
 	{
@@ -272,14 +269,14 @@ void TcpConnectTask::process()
 	}
 }
 
-TcpReadTask::TcpReadTask()
+SocketReadTask::SocketReadTask()
 {
 	conn_idx_ = 0;
 	data_ = NULL;
 	data_len_ = 0;
 }
 
-TcpReadTask::~TcpReadTask()
+SocketReadTask::~SocketReadTask()
 {
 	if (data_)
 	{
@@ -288,7 +285,7 @@ TcpReadTask::~TcpReadTask()
 	}
 }
 
-void TcpReadTask::Init(HandleInfo handle, uint32 conn_idx, char* data, uint32 data_len)
+void SocketReadTask::Init(HandleInfo handle, uint32 conn_idx, char* data, uint32 data_len)
 {
 	handle_ = handle;
 	conn_idx_ = conn_idx;
@@ -297,7 +294,7 @@ void TcpReadTask::Init(HandleInfo handle, uint32 conn_idx, char* data, uint32 da
 	memcpy(data_, data, data_len);
 }
 
-void TcpReadTask::process()
+void SocketReadTask::process()
 {
 	if (handle_.fun_id > 0)
 	{
@@ -318,23 +315,23 @@ void TcpReadTask::process()
 	}
 }
 
-TcpCloseTask::TcpCloseTask()
+SocketCloseTask::SocketCloseTask()
 {
 	conn_idx_ = 0;
 }
 
-TcpCloseTask::~TcpCloseTask()
+SocketCloseTask::~SocketCloseTask()
 {
 	
 }
 
-void TcpCloseTask::Init(HandleInfo close_handle, uint32 conn_idx)
+void SocketCloseTask::Init(HandleInfo close_handle, uint32 conn_idx)
 {
 	close_handle_ = close_handle;
 	conn_idx_ = conn_idx;
 }
 
-void TcpCloseTask::process()
+void SocketCloseTask::process()
 {
 	if (close_handle_.fun_id > 0)
 	{
@@ -353,12 +350,12 @@ void TcpCloseTask::process()
 	}
 }
 
-TcpClientDeleteTask::TcpClientDeleteTask()
+SocketClientDeleteTask::SocketClientDeleteTask()
 {
 
 }
 
-TcpClientDeleteTask::~TcpClientDeleteTask()
+SocketClientDeleteTask::~SocketClientDeleteTask()
 {
 	if (connect_handle_.fun_id > 0)
 	{
@@ -391,14 +388,14 @@ TcpClientDeleteTask::~TcpClientDeleteTask()
 	}
 }
 
-void TcpClientDeleteTask::Init(HandleInfo connect_handle, HandleInfo recv_handle, HandleInfo close_handle)
+void SocketClientDeleteTask::Init(HandleInfo connect_handle, HandleInfo recv_handle, HandleInfo close_handle)
 {
 	connect_handle_ = connect_handle;
 	recv_handle_ = recv_handle;
 	close_handle_ = close_handle;
 }
 
-void TcpClientDeleteTask::process()
+void SocketClientDeleteTask::process()
 {
 
 }

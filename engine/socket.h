@@ -198,7 +198,7 @@ public:
 	Mutex kcp_mutex_;
 
 	bool is_parse_package_;
-	bool is_tcp_client_;
+	bool is_client_;
 
 	SocketIOThread* work_thread_;
 
