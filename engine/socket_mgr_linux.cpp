@@ -625,9 +625,9 @@ uint32 SocketMgr::ConnectEx( const string& ip, uint16 port,
 }
 //------------------------------------------------------------------------------
 uint32 SocketMgr::ConnectUDP(const string& ip, uint16 port, uint16& local_port,
-	const connected_handler_type onconnected_handler,
-	const close_handler_type onclose_handler,
-	const recv_handler_type onrecv_handler,
+	const HandleInfo onconnected_handler,
+	const HandleInfo onclose_handler,
+	const HandleInfo onrecv_handler,
 	uint32 sendbuffersize,
 	uint32 recvbuffersize,
 	bool is_server_build /*= false*/)
@@ -696,9 +696,9 @@ uint32 SocketMgr::ConnectUDP(const string& ip, uint16 port, uint16& local_port,
 }
 
 bool SocketMgr::AcceptUDP(sockaddr_in& remote_address,
-	const connected_handler_type onconnected_handler,
-	const close_handler_type onclose_handler,
-	const recv_handler_type onrecv_handler,
+	const HandleInfo onconnected_handler,
+	const HandleInfo onclose_handler,
+	const HandleInfo onrecv_handler,
 	uint32 sendbuffersize,
 	uint32 recvbuffersize,
 	uint16& local_port)
