@@ -70,14 +70,13 @@ public:
 			int ret = recvfrom(socket_, recvData, 255, 0, (sockaddr *)&remoteAddr, &nAddrLen);
 			if (ret > 0)
 			{
-				uint32 cursor = 0;
 				uint8* buffer_start = (uint8*)(recvData);
-				uint32 len = *((uint32*)(buffer_start + cursor));
+				uint32 len = *((uint32*)(buffer_start));
 				if (len == 8)
 				{
 					char src_conn_str[8] = "connect";
 					char dst_conn_str[8];
-					memcpy(dst_conn_str, (uint8*)(recvData + 4), 8);
+					memcpy(dst_conn_str, (uint8*)(buffer_start + 4), 8);
 					if (strcmp(src_conn_str, dst_conn_str) == 0)
 					{
 						// 模拟tcp的accept, 创建一个新的一个udp socket

@@ -569,6 +569,8 @@ int  Socket::udp_output(const char* buf, int len, ikcpcb* kcp, void* user)
 
 void Socket::send_udp_package(const char* buf, int len)
 {
+	AddRef(); //增加引用
+
 	SendMsg(buf, len);
 }
 
