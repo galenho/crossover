@@ -59,7 +59,7 @@ int PrintLuaStack(lua_State* L)
 	PRINTF_ERROR("Error: %s", strErro.c_str());
 
 	lua_getglobal(pLuaState, "PrintTraceInfo");
-	int iError = lua_pcall(pLuaState,    //VMachine    
+	lua_pcall(pLuaState,    //VMachine    
 		0,    //Argument Count    
 		0,    //Return Value Count    
 		0);

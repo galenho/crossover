@@ -1,6 +1,6 @@
 #include "thread_base.h"
 
-#if defined _WIN32
+#ifdef WIN32
 #include <time.h>
 #endif
 
@@ -12,7 +12,7 @@ void _Run_( void *pArguments )
 	if(!p)
 		return;
 
-#if defined _WIN32
+#ifdef WIN32
 	srand((unsigned int)time(NULL) + GetCurrentThreadId());
 #endif
 
@@ -28,7 +28,7 @@ void ThreadBase::Activate()
 {
 	is_running_ = true;
 
-#if defined _WIN32
+#ifdef WIN32
 	handle = CreateThread( NULL,0, (LPTHREAD_START_ROUTINE)_Run_,this,0,0 ) ;
 #else
 	new_thread = pthread_create(&id,NULL,(tc_thread_func)_Run_,this);
@@ -42,7 +42,7 @@ bool ThreadBase::Run()
 
 void ThreadBase::Shutdown()
 {
-#if defined _WIN32
+#ifdef WIN32
 	CloseHandle(handle);
 #else
 	//pthread_cancel(new_thread);
