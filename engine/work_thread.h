@@ -48,7 +48,6 @@ private:
 	hash_map<uint32, IntervalTimer*> timer_map_;
 	vector<IntervalTimer*> del_timer_list_;
 
-	uint32 cur_time_;
 	uint32 auto_timer_idx_;
 };
 

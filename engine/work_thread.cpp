@@ -5,7 +5,6 @@
 
 WorkThread::WorkThread()
 {
-	cur_time_ = getMSTime();
 	auto_timer_idx_ = 1;
 
 	init_handler_ = NULL;
@@ -51,7 +50,7 @@ bool WorkThread::Run()
 
 		if ((int32)(cur_time - last_time) >= wait_time)
 		{
-			last_time = cur_time_;
+			last_time = cur_time;
 		}
 		else
 		{ 
@@ -92,7 +91,7 @@ bool WorkThread::Run()
 				continue;
 			}
 
-			bool ret = timer->Update(cur_time_);
+			bool ret = timer->Update(cur_time);
 			if (ret)
 			{
 				TimerTask::process(timer->handler_, timer->index_);
@@ -114,7 +113,7 @@ bool WorkThread::Run()
 		//------------------------------------------------------------------------
 		// (3) 处理Socket
 		//------------------------------------------------------------------------
-		SocketMgr::get_instance()->Update(cur_time_);
+		SocketMgr::get_instance()->Update(cur_time);
 	}
 
 	// 线程结束运行
