@@ -1,11 +1,12 @@
 server = tcpserver.new()
 
 fun_connect = function(conn_idx, is_success)
-	--print(conn_idx)
+	print(is_success)
+	print("fun_connect----" .. conn_idx)
 end
 
 fun_close = function(conn_idx)
-	print(conn_idx)
+	print("fun_close----" ..conn_idx)
 end
 
 fun_recv = function(conn_idx, data, len)

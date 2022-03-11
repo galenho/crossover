@@ -474,7 +474,7 @@ void Socket::OnRead()
 void Socket::OnDisconnect()
 {
 	SocketCloseTask* task = new SocketCloseTask();
-	task->Init(onconnected_handler_, conn_idx_);
+	task->Init(onclose_handler_, conn_idx_);
 	Scheduler::get_instance()->PushTask(task);
 }
 

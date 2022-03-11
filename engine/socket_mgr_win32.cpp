@@ -33,7 +33,7 @@ void HandleConnectComplete(Socket* s, uint32 len, bool is_success)
 	}
 }
 
-void HandleReadComplete(Socket* s, uint32 len, bool is_success)
+void HandleReadComplete(Socket* s, uint32 len)
 {
 	//PRINTF_ERROR("HandleReadComplete fd = %d, conn_idx = %d, status = %d, len = %d", s->GetFd(), s->GetConnectIdx(), s->status_, len);
 
@@ -96,7 +96,7 @@ void HandleReadComplete(Socket* s, uint32 len, bool is_success)
 	}
 }
 
-void HandleWriteComplete(Socket* s, uint32 len, bool is_success)
+void HandleWriteComplete(Socket* s, uint32 len)
 {
 	//PRINTF_ERROR("HandleWriteComplete fd = %d, conn_idx = %d, status = %d", s->GetFd(), s->GetConnectIdx(), s->status_);
 
@@ -118,7 +118,7 @@ void HandleWriteComplete(Socket* s, uint32 len, bool is_success)
 	}
 }
 
-void HandleClose(Socket* s, uint32 len, bool is_success)
+void HandleClose(Socket* s)
 {
 	//PRINTF_ERROR("HandleClose fd = %d, conn_idx = %d, status = %d", s->GetFd(), s->GetConnectIdx(), s->status_);
 
@@ -131,7 +131,7 @@ void HandleClose(Socket* s, uint32 len, bool is_success)
 	}
 }
 
-void HandleDelaySend(Socket* s, uint32 len, bool is_success)
+void HandleDelaySend(Socket* s, uint32 len)
 {
 	//PRINTF_ERROR("HandleDelaySend fd = %d, conn_idx = %d, status = %d", s->GetFd(), s->GetConnectIdx(), s->status_);
 
@@ -180,20 +180,13 @@ bool SocketIOThread::Run()
 
 	HANDLE cp = completion_port_;
 	DWORD bytes_transferred;
-	Socket* s;
+	void* ptr;
 	OverlappedStruct* ov;
 	LPOVERLAPPED overlapped;
 
 	while (is_running_)
 	{
-#ifndef _WIN64
-		int ret = GetQueuedCompletionStatus(cp, &bytes_transferred, (LPDWORD)&s, &overlapped, INFINITE);
-#else
-		int ret = GetQueuedCompletionStatus(cp, &bytes_transferred, (PULONG_PTR)&s, &overlapped, INFINITE);
-#endif
-
-		DWORD last_error = ::GetLastError();
-
+		int ret = GetQueuedCompletionStatus(cp, &bytes_transferred, (LPDWORD)&ptr, &overlapped, INFINITE);
 		if (ret)
 		{
 			//(1) 如果函数从完成端口取出一个成功I/O操作的完成包，返回值为非0。
@@ -210,18 +203,35 @@ bool SocketIOThread::Run()
 				return true;
 			}
 
-			if (s == NULL)
+			if (ptr == NULL)
 			{
 				continue;
 			}
 			//---------------------------------------------------------------------------------
+			Socket* s = (Socket*)ptr;
 			REF_ADD(s);
 
 			s->status_mutex_.Lock();
 
-			if (ov->event_ >= SOCKET_IO_EVENT_CONNECT_COMPLETE && ov->event_ < MAX_SOCKET_IO_EVENTS)
+			switch (ov->event_)
 			{
-				ophandlers[ov->event_](s, bytes_transferred, true);
+			case SOCKET_IO_EVENT_CONNECT_COMPLETE:
+				HandleConnectComplete(s, bytes_transferred, true);
+				break;
+			case SOCKET_IO_EVENT_READ_COMPLETE:
+				HandleReadComplete(s, bytes_transferred);
+				break;
+			case SOCKET_IO_EVENT_WRITE_COMPLETE:
+				HandleWriteComplete(s, bytes_transferred);
+				break;
+			case SOCKET_IO_EVENT_DELAY_SEND:
+				HandleDelaySend(s, bytes_transferred);
+				break;
+			case SOCKET_IO_EVENT_CLOSE:
+				HandleClose(s);
+				break;
+			default:
+				break;
 			}
 
 			s->status_mutex_.UnLock();
@@ -238,11 +248,13 @@ bool SocketIOThread::Run()
 				//(2) 如果 *lpOverlapped为空并且函数没有从完成端口取出完成包，返回值则为0。
 				//    函数则不会在lpNumberOfBytes and lpCompletionKey所指向的参数中存储信息。
 				//	  调用GetLastError可以得到一个扩展错误信息。如果函数由于等待超时而未能出列完成包，GetLastError返回WAIT_TIMEOUT. 
+				DWORD last_error = ::GetLastError();
 
 				continue;
 			}
 			else 
 			{
+				Socket* s = (Socket*)ptr;
 				if (s == NULL)
 				{
 					continue;
@@ -256,7 +268,17 @@ bool SocketIOThread::Run()
 
 					s->status_mutex_.Lock();
 
-					ophandlers[ov->event_](s, bytes_transferred, false);
+					switch (ov->event_)
+					{
+					case SOCKET_IO_EVENT_CONNECT_COMPLETE:
+						HandleConnectComplete(s, bytes_transferred, false);
+						break;
+					case SOCKET_IO_EVENT_READ_COMPLETE:
+						HandleReadComplete(s, bytes_transferred);
+						break;
+					default:
+						break;
+					}
 
 					s->status_mutex_.UnLock();
 
