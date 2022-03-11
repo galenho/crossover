@@ -5,7 +5,7 @@
 #ifdef CONFIG_USE_IOCP
 void HandleConnectComplete(Socket* s, uint32 len, bool is_success)
 {
-	PRINTF_ERROR("HandleConnectComplete fd = %d, conn_idx = %d, status = %d, len = %d", s->GetFd(), s->GetConnectIdx(), s->status_, len);
+	//PRINTF_ERROR("HandleConnectComplete fd = %d, conn_idx = %d, status = %d, len = %d", s->GetFd(), s->GetConnectIdx(), s->status_, len);
 
 	if (is_success)
 	{
@@ -35,7 +35,7 @@ void HandleConnectComplete(Socket* s, uint32 len, bool is_success)
 
 void HandleReadComplete(Socket* s, uint32 len, bool is_success)
 {
-	PRINTF_ERROR("HandleReadComplete fd = %d, conn_idx = %d, status = %d, len = %d", s->GetFd(), s->GetConnectIdx(), s->status_, len);
+	//PRINTF_ERROR("HandleReadComplete fd = %d, conn_idx = %d, status = %d, len = %d", s->GetFd(), s->GetConnectIdx(), s->status_, len);
 
 	// 释放引用-1
 	REF_RELEASE(s);
@@ -65,7 +65,7 @@ void HandleReadComplete(Socket* s, uint32 len, bool is_success)
 		}
 		else
 		{
-			PRINTF_ERROR("HandleReadComplete SocketMgr::get_instance()->CloseSocket, fd = %d, conn_idx = %d", s->GetFd(), s->GetConnectIdx());
+			//PRINTF_ERROR("HandleReadComplete SocketMgr::get_instance()->CloseSocket, fd = %d, conn_idx = %d", s->GetFd(), s->GetConnectIdx());
 			if (s->GetSocketType() == SOCKET_TYPE_TCP)
 			{
 				SocketMgr::get_instance()->CloseSocket(s);
@@ -98,7 +98,7 @@ void HandleReadComplete(Socket* s, uint32 len, bool is_success)
 
 void HandleWriteComplete(Socket* s, uint32 len, bool is_success)
 {
-	PRINTF_ERROR("HandleWriteComplete fd = %d, conn_idx = %d, status = %d", s->GetFd(), s->GetConnectIdx(), s->status_);
+	//PRINTF_ERROR("HandleWriteComplete fd = %d, conn_idx = %d, status = %d", s->GetFd(), s->GetConnectIdx(), s->status_);
 
 	// 释放引用-1
 	REF_RELEASE(s);
@@ -120,7 +120,7 @@ void HandleWriteComplete(Socket* s, uint32 len, bool is_success)
 
 void HandleClose(Socket* s, uint32 len, bool is_success)
 {
-	PRINTF_ERROR("HandleClose fd = %d, conn_idx = %d, status = %d", s->GetFd(), s->GetConnectIdx(), s->status_);
+	//PRINTF_ERROR("HandleClose fd = %d, conn_idx = %d, status = %d", s->GetFd(), s->GetConnectIdx(), s->status_);
 
 	REF_RELEASE(s);
 
@@ -133,7 +133,7 @@ void HandleClose(Socket* s, uint32 len, bool is_success)
 
 void HandleDelaySend(Socket* s, uint32 len, bool is_success)
 {
-	PRINTF_ERROR("HandleDelaySend fd = %d, conn_idx = %d, status = %d", s->GetFd(), s->GetConnectIdx(), s->status_);
+	//PRINTF_ERROR("HandleDelaySend fd = %d, conn_idx = %d, status = %d", s->GetFd(), s->GetConnectIdx(), s->status_);
 
 	REF_RELEASE(s);
 
@@ -704,8 +704,6 @@ bool SocketMgr::Send(uint32 conn_idx, const void* content, uint32 len)
 
 bool SocketMgr::SendMsg(uint32 conn_idx, const void* content, uint32 len)
 {
-	PRINTF_ERROR("SendMsg, conn_idx = %d", conn_idx);
-
 	Socket* s = NULL;
 
 	socket_lock.ReadLock();
