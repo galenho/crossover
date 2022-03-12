@@ -22,21 +22,16 @@
 	
 	2. 在centos7.6上的构建:
 	
-	  	2.1 centos7.6下libstdc++版本过低的解决办法：
-		
-		(1) 把crossover/install/libstdc++.so.6.0.21复制到/usr/lib64目录
+		(1) 安装依赖库
 
-			cd crossover/install/libstdc++.so.6.0.21
-			cp libstdc++.so.6.0.21 /usr/lib64/
-
-		(2) cd /usr/lib64
+			yum install wget gcc gcc-c++ gdb make automake zlib-devel libevent-devel ncurses-devel python readline-devel
 			
-			rm libstdc++.so.6
-			ln -s libstdc++.so.6.0.21 libstdc++.so.6
+			yum install openssl-devel cyrus-sasl-devel
 
-			strings /usr/lib64/libstdc++.so.6 | grep GLIBC
-			
-		2.2 编译程序
+		(2) 升级cmake 3.20.2
+
+
+		(3) 编译程序
 		
 			cd sh
 			chmod -R 750 *
